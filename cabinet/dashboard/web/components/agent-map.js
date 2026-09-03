@@ -1,6 +1,6 @@
 // Карта агентов — коммутационная панель. Дорожки по командам, маршрут задачи загорается сегментами.
                                      
-import { h, s, tooltip, STATUS_LABEL, usd } from '../ui.js?v=mtlshmqq';
+import { h, s, tooltip, STATUS_LABEL, usd } from '../ui.js?v=mtlslcfn';
 
 const LANES                                                   = [
   { id: 'growth', label: 'Growth', roles: ['seo-strategist', 'funnel-analyst'] },

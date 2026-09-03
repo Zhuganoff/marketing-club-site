@@ -1,7 +1,7 @@
 // Прослойка node-модулей для браузерной сборки кабинета (GitHub Pages).
 // Виртуальная файловая система: чтение из вшитого снимка (agents/, shared/, demo-проекты),
 // записи — в localStorage посетителя. Данные не покидают браузер.
-import SEED from './files.js?v=mtlshmqq';
+import SEED from './files.js?v=mtlslcfn';
 
 const LS_KEY = 'mc.cabinet.fs.v1';
 const files = new Map(Object.entries(SEED));
@@ -154,10 +154,23 @@ export async function lookup(_host, _opts) { return [{ address: '203.0.113.1', f
 // Прямая попытка → наш помощник mc-site-audit.zhuganoff.workers.dev (воркер владельца,
 // читает только открытые страницы и отвечает только нашему сайту).
 const AUDIT_HELPER = 'https://mc-site-audit.zhuganoff.workers.dev/?url=';
-async function proxyFetch(url) {
+async function helperFetch(url) {
   const r = await fetch(AUDIT_HELPER + encodeURIComponent(url));
   const j = await r.json();
   if (j.error) throw new Error(j.message || j.error);
+  return j;
+}
+// Запасной публичный посредник: часть российских провайдеров глушит workers.dev.
+async function alloriginsFetch(url) {
+  const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url));
+  if (!r.ok) throw new Error('proxy ' + r.status);
+  const j = await r.json();
+  return { status: (j.status && j.status.http_code) || (j.contents != null ? 200 : 502), statusText: '', finalUrl: url, body: j.contents ?? '' };
+}
+async function proxyFetch(url) {
+  let j;
+  try { j = await helperFetch(url); }
+  catch (e) { j = await alloriginsFetch(url); }
   const bytes = new TextEncoder().encode(j.body ?? '');
   const reader = () => { let used = false; return {
     async read() { if (used) return { done: true, value: undefined }; used = true; return { done: false, value: bytes }; },

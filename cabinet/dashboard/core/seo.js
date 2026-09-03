@@ -2,8 +2,8 @@
 // с прошлой проверкой. Сам аудит выполняется в dashboard/api/site-audit.ts (сеть только там);
 // сюда приходит готовый результат — ядро остаётся без сетевого доступа.
                                                                                  
-import { DomainError } from './types.js?v=mtlshmqq';
-import { pushEvent } from './events.js?v=mtlshmqq';
+import { DomainError } from './types.js?v=mtlslcfn';
+import { pushEvent } from './events.js?v=mtlslcfn';
 
 export const SEO_AUDIT_KEEP = 20;
 

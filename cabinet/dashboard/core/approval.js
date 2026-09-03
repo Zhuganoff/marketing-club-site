@@ -1,9 +1,9 @@
 // Согласование человеком и сброс согласования при правке. См. docs/PUBLISHING_CONTRACT.md §2–3.
                                                                                                        
-import { DomainError } from './types.js?v=mtlshmqq';
-import { computeContentHash } from './hash.js?v=mtlshmqq';
-import { nextId } from './ids.js?v=mtlshmqq';
-import { pushEvent } from './events.js?v=mtlshmqq';
+import { DomainError } from './types.js?v=mtlslcfn';
+import { computeContentHash } from './hash.js?v=mtlslcfn';
+import { nextId } from './ids.js?v=mtlslcfn';
+import { pushEvent } from './events.js?v=mtlslcfn';
 
 export function getArtifact(state              , artifactId        )                  {
   const a = state.artifacts.find((x) => x.id === artifactId);
