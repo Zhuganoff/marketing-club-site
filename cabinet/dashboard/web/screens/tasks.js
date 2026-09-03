@@ -1,9 +1,9 @@
 // Задачи: канбан, карточка задачи с маршрутом и мини-картой агентов, форма создания.
                                      
-import { api } from '../api.js?v=mtlq3kut';
-import { h, badge, statusBadge, kindChip, fmtDate, COLUMNS, COLUMN_LABEL, KIND_LABEL, ART_KIND, short } from '../ui.js?v=mtlq3kut';
-import { agentMap } from '../components/agent-map.js?v=mtlq3kut';
-import { taskForm } from '../components/task-form.js?v=mtlq3kut';
+import { api } from '../api.js?v=mtlshmqq';
+import { h, badge, statusBadge, kindChip, fmtDate, COLUMNS, COLUMN_LABEL, KIND_LABEL, ART_KIND, short } from '../ui.js?v=mtlshmqq';
+import { agentMap } from '../components/agent-map.js?v=mtlshmqq';
+import { taskForm } from '../components/task-form.js?v=mtlshmqq';
 
 export function routeView(app     , task     )              {
   const steps                = [];

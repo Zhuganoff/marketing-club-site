@@ -1,9 +1,9 @@
 // Экран «Сегодня» — рабочий стол владельца: решения, активные задачи, ближайшие 7 дней, публикации и ошибки.
                                      
-import { api } from '../api.js?v=mtlq3kut';
-import { h, badge, kindChip, fmtTime, usd, dateKey, timeOf, fmtDay, addDays, todayKey, COLUMN_LABEL, ART_STATUS_SHORT } from '../ui.js?v=mtlq3kut';
-import { materialCard } from '../components/material-card.js?v=mtlq3kut';
-import { orderReviewQueue } from '../review-queue.js?v=mtlq3kut';
+import { api } from '../api.js?v=mtlshmqq';
+import { h, badge, kindChip, fmtTime, usd, dateKey, timeOf, fmtDay, addDays, todayKey, COLUMN_LABEL, ART_STATUS_SHORT } from '../ui.js?v=mtlshmqq';
+import { materialCard } from '../components/material-card.js?v=mtlshmqq';
+import { orderReviewQueue } from '../review-queue.js?v=mtlshmqq';
 
 const PUBLICATION_EVENTS = new Set(['job.published', 'job.failed', 'quality.block', 'approval.granted', 'approval.revoked']);
 

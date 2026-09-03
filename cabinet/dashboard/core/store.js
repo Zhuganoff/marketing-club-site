@@ -7,16 +7,16 @@ import { dirname, join, resolve } from '../_shim/node.js';
                                                                                                                                         
                                                                
                     
-import { DomainError, ROLE_ORDER } from './types.js?v=mtlq3kut';
+import { DomainError, ROLE_ORDER } from './types.js?v=mtlshmqq';
                                       
-import { systemClock } from './ids.js?v=mtlq3kut';
-import { createConnectors } from './connectors.js?v=mtlq3kut';
-import { computeContentHash } from './hash.js?v=mtlq3kut';
-import { pushEvent } from './events.js?v=mtlq3kut';
-import { createTask } from './workflow.js?v=mtlq3kut';
+import { systemClock } from './ids.js?v=mtlshmqq';
+import { createConnectors } from './connectors.js?v=mtlshmqq';
+import { computeContentHash } from './hash.js?v=mtlshmqq';
+import { pushEvent } from './events.js?v=mtlshmqq';
+import { createTask } from './workflow.js?v=mtlshmqq';
                                              
-import { createProjectFiles, teamCoverage, validateProjectInput } from './project-factory.js?v=mtlq3kut';
-import { KIND_LABELS } from './workflow.js?v=mtlq3kut';
+import { createProjectFiles, teamCoverage, validateProjectInput } from './project-factory.js?v=mtlshmqq';
+import { KIND_LABELS } from './workflow.js?v=mtlshmqq';
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const TEAM_NAMES                         = { strategy: 'Strategy', content: 'Content', growth: 'Growth', control: 'Control', publishing: 'Publishing' };

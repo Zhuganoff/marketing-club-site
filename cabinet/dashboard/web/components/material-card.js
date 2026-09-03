@@ -1,7 +1,7 @@
 // Крупная карточка материала: текст, медиа-заглушка, площадки, время, риски, комментарий контролёра, решения человека.
                                      
-import { api } from '../api.js?v=mtlq3kut';
-import { h, badge, statusBadge, kindChip, modal, fmtDate, short, todayKey, PLATFORM_LABEL, STATUS_LABEL, ART_KIND } from '../ui.js?v=mtlq3kut';
+import { api } from '../api.js?v=mtlshmqq';
+import { h, badge, statusBadge, kindChip, modal, fmtDate, short, todayKey, PLATFORM_LABEL, STATUS_LABEL, ART_KIND } from '../ui.js?v=mtlshmqq';
 
                                    
                     

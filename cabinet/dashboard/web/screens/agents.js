@@ -1,7 +1,7 @@
                                      
-import { h, badge, statusBadge, avatar, usd, fmtDate, TEAM_LABEL, ART_KIND, STATUS_LABEL } from '../ui.js?v=mtlq3kut';
-import { agentMap } from '../components/agent-map.js?v=mtlq3kut';
-import { teamStudio, AGENT_NAME } from '../components/team-studio.js?v=mtlq3kut';
+import { h, badge, statusBadge, avatar, usd, fmtDate, TEAM_LABEL, ART_KIND, STATUS_LABEL } from '../ui.js?v=mtlshmqq';
+import { agentMap } from '../components/agent-map.js?v=mtlshmqq';
+import { teamStudio, AGENT_NAME } from '../components/team-studio.js?v=mtlshmqq';
 
 // Лента офиса (направление Teamly, 2026-09-03): журнал проекта в виде переписки команды
 // + поле «поручить». Честность: это существующие события ActivityEvent, а поручение

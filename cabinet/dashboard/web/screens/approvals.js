@@ -1,8 +1,8 @@
 // Экран «Согласования» — входящая очередь решений человека.
                                      
-import { h, badge, statusBadge, fmtDate, fmtTime, short } from '../ui.js?v=mtlq3kut';
-import { materialCard } from '../components/material-card.js?v=mtlq3kut';
-import { orderReviewQueue } from '../review-queue.js?v=mtlq3kut';
+import { h, badge, statusBadge, fmtDate, fmtTime, short } from '../ui.js?v=mtlshmqq';
+import { materialCard } from '../components/material-card.js?v=mtlshmqq';
+import { orderReviewQueue } from '../review-queue.js?v=mtlshmqq';
 
 const FILTERS                                                      = [
   { id: 'pending', label: 'Ждут решения', statuses: ['IN_REVIEW'] },

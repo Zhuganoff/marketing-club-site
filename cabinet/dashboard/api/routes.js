@@ -1,16 +1,16 @@
 // Обработчики /api/*. Транспорт-независимы: получают метод, путь, тело; возвращают объект.
                                               
-import { ARCHIVE_TTL_DAYS, MODEL_LABELS } from '../core/store.js?v=mtlq3kut';
-import { analyzeSite } from './site-audit.js?v=mtlq3kut';
-import { DomainError } from '../core/types.js?v=mtlq3kut';
+import { ARCHIVE_TTL_DAYS, MODEL_LABELS } from '../core/store.js?v=mtlshmqq';
+import { analyzeSite } from './site-audit.js?v=mtlshmqq';
+import { DomainError } from '../core/types.js?v=mtlshmqq';
                                                                            
-import { advanceTask, createTask, planTask, unblockTask, ROUTES, KIND_LABELS } from '../core/workflow.js?v=mtlq3kut';
-import { approveArtifact, declineArtifact, deferArtifactDecision, editArtifact, rejectArtifact, rescheduleArtifact } from '../core/approval.js?v=mtlq3kut';
-import { campaignSummary, createCampaign } from '../core/campaigns.js?v=mtlq3kut';
-import { createPublishJob, retryPublish, runJob, recountApprovalShare } from '../core/publishing.js?v=mtlq3kut';
-import { MOCK_MODES } from '../core/connectors.js?v=mtlq3kut';
-import { teamCoverage, wizardTemplate } from '../core/project-factory.js?v=mtlq3kut';
-import { recordSeoAudit, saveSeoProfile, ctaFromProfile } from '../core/seo.js?v=mtlq3kut';
+import { advanceTask, createTask, planTask, unblockTask, ROUTES, KIND_LABELS } from '../core/workflow.js?v=mtlshmqq';
+import { approveArtifact, declineArtifact, deferArtifactDecision, editArtifact, rejectArtifact, rescheduleArtifact } from '../core/approval.js?v=mtlshmqq';
+import { campaignSummary, createCampaign } from '../core/campaigns.js?v=mtlshmqq';
+import { createPublishJob, retryPublish, runJob, recountApprovalShare } from '../core/publishing.js?v=mtlshmqq';
+import { MOCK_MODES } from '../core/connectors.js?v=mtlshmqq';
+import { teamCoverage, wizardTemplate } from '../core/project-factory.js?v=mtlshmqq';
+import { recordSeoAudit, saveSeoProfile, ctaFromProfile } from '../core/seo.js?v=mtlshmqq';
 
                                                                      
                                                             

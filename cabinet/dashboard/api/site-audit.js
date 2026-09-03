@@ -5,7 +5,7 @@ import { __webFetch } from '../_shim/node.js';
 // сбора персональных данных и обхода защит. Ядро (dashboard/core) сети не касается.
 import { lookup } from '../_shim/node.js';
 import { isIP } from '../_shim/node.js';
-import { DomainError } from '../core/types.js?v=mtlq3kut';
+import { DomainError } from '../core/types.js?v=mtlshmqq';
 
 const MAX_BYTES = 1_500_000;
 const TIMEOUT_MS = 8000;
