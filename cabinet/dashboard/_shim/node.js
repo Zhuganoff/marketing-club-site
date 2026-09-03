@@ -148,3 +148,35 @@ export function isIP(s) {
   return 0;
 }
 export async function lookup(_host, _opts) { return [{ address: '203.0.113.1', family: 4 }]; }
+
+// ---- Чтение чужих сайтов для анализа (только браузерная сборка) ----
+// Браузер запрещает публичной странице читать большинство сайтов напрямую (CORS).
+// Поэтому: сначала честная прямая попытка, при отказе — публичный прокси-посредник
+// allorigins.win (передаётся только адрес сайта; читаются только открытые страницы).
+async function proxyFetch(url) {
+  const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url));
+  if (!r.ok) throw new Error('proxy ' + r.status);
+  const j = await r.json();
+  const status = j.status && j.status.http_code ? j.status.http_code : (j.contents != null ? 200 : 502);
+  const text = j.contents ?? '';
+  const bytes = new TextEncoder().encode(text);
+  const reader = () => { let used = false; return {
+    async read() { if (used) return { done: true, value: undefined }; used = true; return { done: false, value: bytes }; },
+    cancel() { return Promise.resolve(); },
+  }; };
+  return {
+    status, statusText: '',
+    headers: { get: () => null },
+    body: { getReader: reader, cancel: () => Promise.resolve() },
+  };
+}
+export async function __webFetch(url, opts) {
+  try {
+    const res = await fetch(url, opts);
+    // opaqueredirect/opaque (status 0) — браузер скрыл ответ; идём через посредника
+    if (res.status === 0 || res.type === 'opaque' || res.type === 'opaqueredirect') return await proxyFetch(url);
+    return res;
+  } catch (e) {
+    return await proxyFetch(url);
+  }
+}

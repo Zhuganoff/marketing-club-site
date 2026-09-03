@@ -1,3 +1,4 @@
+import { __webFetch } from '../_shim/node.js';
 // Анализ сайта для мастера проекта. Единственное место с сетевым доступом в панели —
 // разрешено владельцем 2026-09-03 (в диалоге: «да, всё делай по очереди» на предложение
 // «подключай анализ сайта по сети»). Только чтение публичных страниц: без входов, форм,
@@ -79,7 +80,7 @@ async function fetchLimited(url        )                                        
     const timer = setTimeout(() => ctl.abort(), TIMEOUT_MS);
     let res          ;
     try {
-      res = await fetch(current, { redirect: 'manual', signal: ctl.signal, headers: { 'user-agent': 'MarketingClub-SiteCheck/1.0 (local; owner-initiated)' } });
+      res = await __webFetch(current, { redirect: 'manual', signal: ctl.signal, headers: { 'user-agent': 'MarketingClub-SiteCheck/1.0 (local; owner-initiated)' } });
     } finally { clearTimeout(timer); }
     if (res.status >= 300 && res.status < 400 && res.headers.get('location')) {
       current = new URL(res.headers.get('location') , current).toString();
@@ -110,7 +111,7 @@ async function statusOf(url        )                         {
     const ctl = new AbortController();
     const timer = setTimeout(() => ctl.abort(), TIMEOUT_MS);
     try {
-      const res = await fetch(url, { redirect: 'follow', signal: ctl.signal, headers: { 'user-agent': 'MarketingClub-SiteCheck/1.0 (local; owner-initiated)' } });
+      const res = await __webFetch(url, { redirect: 'follow', signal: ctl.signal, headers: { 'user-agent': 'MarketingClub-SiteCheck/1.0 (local; owner-initiated)' } });
       void res.body?.cancel().catch(() => undefined);
       return res.status;
     } finally { clearTimeout(timer); }
