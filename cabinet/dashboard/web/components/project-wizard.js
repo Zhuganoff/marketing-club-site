@@ -38,9 +38,8 @@ export function coverageNodes(tpl     , roles          )                        
   return out;
 }
 
-function mockNote()              {
-  return h('div', { class: 'callout' }, h('b', null, 'Локальный mock-режим. '), 'Проект создаётся как папка projects/<id>/ на этом компьютере. Каналы — только описания для mock-коннекторов; аккаунты, ссылки, токены, ключи моделей и сетевые службы не подключаются и не вводятся. Материалы переносятся вручную по чек-листу docs/TRANSFER_CHECKLIST.md.');
-}
+// Замечание владельца 03.09: простому пользователю технические пояснения не нужны —
+// никаких плашек про mock-режим, папки и чек-листы в мастере.
 
 export function openProjectWizard(app     ) {
   const holder = h('div', { class: 'wizard' }, h('div', { class: 'empty' }, 'Загрузка описания шаблона…'));
@@ -118,9 +117,13 @@ function build(app     , tpl     , holder             , m                       
                   h('span', { class: 'code' }, c.name), h('span', null, c.message))))),
             issues.length ? h('label', { class: 'check', style: { marginTop: '10px' } }, issueBox,
               `после создания поручить ${Math.min(issues.length, 6)} замечаний команде (идеи для SEO-стратега Сони)`) : null));
-          out.appendChild(h('div', { class: 'callout human' }, h('b', null, 'Предлагаем: '),
-            `название «${d.name || '—'}», направление «${preset.name}» (${preset.kindLabels.join(', ')}), команда из ${d.roles.length} ролей, площадки ВКонтакте/Телеграм/Instagram (тестовый режим), черновики аудитории и тона. Всё правится на следующих шагах.`,
-            audit.platform ? h('div', { style: { marginTop: '6px' } }, h('b', null, `Сайт на ${audit.platform.name}: `), `${audit.platform.publishNote} — задел для SEO-модуля.`) : null));
+          out.appendChild(h('div', { class: 'callout human' }, h('b', null, 'Как предлагаем вести проект: '),
+            h('div', { style: { marginTop: '4px' } }, h('b', null, 'Кто ваш клиент: '), d.audience),
+            h('div', { style: { marginTop: '4px' } }, h('b', null, 'Направление: '), `«${preset.name}» — ${preset.kindLabels.join(', ')}; команда из ${d.roles.length} специалистов.`),
+            h('div', { style: { marginTop: '4px' } }, h('b', null, 'Площадки: '), 'ВКонтакте, Телеграм, Instagram + статьи на сайт под поисковый спрос.'),
+            h('div', { style: { marginTop: '4px' } }, h('b', null, 'Ритм: '), `${tpl.defaults.frequencyPerWeek} выхода в неделю; первые шаги — пост-знакомство, серия про услуги${issues.length ? ' и исправление замечаний по сайту' : ''}.`),
+            audit.platform ? h('div', { style: { marginTop: '4px' } }, h('b', null, `Сайт на ${audit.platform.name}: `), `${audit.platform.publishNote}.`) : null,
+            h('div', { class: 'muted small', style: { marginTop: '6px' } }, 'Это черновик стратегии — дополните ниже своими словами, всё правится на следующих шагах.')));
         } catch (e) {
           const preset = applySuggestions(null, null);
           out.innerHTML = '';
@@ -130,12 +133,25 @@ function build(app     , tpl     , holder             , m                       
         }
       };
       steps[0].collect = () => { (d       ).websiteUrl = url.value.trim(); (d       ).ownerNote = own.value.trim(); if (own.value.trim() && !d.goals.includes(own.value.trim())) d.goals = [own.value.trim(), ...d.goals]; return null; };
+      // Автозапуск (замечание владельца 03.09): вставили адрес — анализ начинается сам,
+      // пользователь дополняет уже после того, как система разобралась и предложила стратегию.
+      let analyzedFor = '';
+      let timer                                       = null;
+      const maybeAnalyze = (delay        ) => {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          const v = url.value.trim();
+          if (v && v !== analyzedFor && /.\../.test(v.replace(/^https?:\/\//i, ''))) { analyzedFor = v; void analyze(); }
+        }, delay);
+      };
+      url.addEventListener('input', () => maybeAnalyze(700));
+      url.addEventListener('paste', () => maybeAnalyze(80));
+      url.addEventListener('keydown', (e               ) => { if (e.key === 'Enter') { e.preventDefault(); maybeAnalyze(0); } });
       return h('div', { class: 'form' },
-        h('label', null, 'Сайт проекта', url),
-        h('div', { class: 'actions' }, h('button', { type: 'button', class: 'btn human', onClick: analyze }, 'Проанализировать сайт'),
-          h('span', { class: 'muted small' }, 'или просто нажмите «Далее» и заполните вручную')),
-        h('label', null, 'Добавьте от себя', own),
-        out);
+        h('label', null, 'Вставьте адрес сайта — анализ начнётся сам', url),
+        h('div', { class: 'muted small' }, 'Система прочитает сайт, поймёт аудиторию и предложит, как его вести. Нет сайта — просто нажмите «Далее».'),
+        out,
+        h('label', null, 'Дополните от себя (после анализа)', own));
     }, collect: () => null },
 
     { title: 'Основное', render: () => {
@@ -148,7 +164,7 @@ function build(app     , tpl     , holder             , m                       
       const geography = h('input', { value: d.geography, placeholder: 'город, страна или регион (можно оставить пустым — будет TODO)' })                    ;
       const collect = () => { d.name = name.value.trim(); d.id = id.value.trim(); d.language = language.value               ; d.timezone = timezone.value.trim(); d.geography = geography.value.trim(); };
       steps[1].collect = () => { collect(); if (!d.name) return 'Укажите название проекта'; if (!ID_RULE.test(d.id) || d.id.startsWith('_')) return 'id: латиница в нижнем регистре, цифры и дефис (2–41 символа), первый символ — буква'; if (app.projects.some((p) => p.id === d.id)) return `Проект с id «${d.id}» уже есть`; if (!TZ_RULE.test(d.timezone)) return 'Часовой пояс в формате Region/City'; return null; };
-      return h('div', { class: 'form' }, mockNote(),
+      return h('div', { class: 'form' },
         h('label', null, 'Название', name), h('label', null, 'Идентификатор (имя папки projects/<id>)', id),
         h('div', { class: 'grid two' }, h('label', null, 'Язык', language), h('label', null, 'Часовой пояс', timezone)),
         h('label', null, 'География', geography));
@@ -271,8 +287,7 @@ function build(app     , tpl     , holder             , m                       
           h('div', { class: 'wizard-kv' }, h('span', { class: 'k' }, 'Маршруты'), h('span', { class: 'v' }, ...cov)),
           kv('Потолок', `${usd(d.weeklyLimitUsd)}/нед`), kv('Согласующие', d.approvers.join(', ')),
           kv('Публикации', `${d.frequencyPerWeek}/нед · ${d.preferredHours.join(', ') || '—'} · автопубликация выключена`)),
-        mockNote(),
-        h('div', { class: 'muted small' }, 'После создания: откроются «Настройки проекта» нового проекта; материалы переносятся вручную по чек-листу docs/TRANSFER_CHECKLIST.md. Файлы: project.json, seed.json, brand.md, README.md.'));
+        h('div', { class: 'muted small' }, 'После создания откроются настройки проекта — всё можно будет поправить в любой момент.'));
     }, collect: () => null },
   ];
 
@@ -280,8 +295,8 @@ function build(app     , tpl     , holder             , m                       
   const body = h('div', { class: 'wizard-body' });
   const back = h('button', { type: 'button', class: 'btn', onClick: () => { showError(null); current = Math.max(0, current - 1); draw(); } }, '← Назад')                     ;
   const next = h('button', { type: 'button', class: 'btn primary', onClick: () => { const err = steps[current].collect(); if (err) { showError(err); return; } showError(null); current++; draw(); } }, 'Далее →')                     ;
-  const create = h('button', { type: 'button', class: 'btn human', onClick: () => submit() }, 'Создать проект (локально)')                     ;
-  const footer = h('div', { class: 'wizard-footer' }, back, h('span', { class: 'spacer' }), badge('mock · без сети · без ключей', ''), next, create);
+  const create = h('button', { type: 'button', class: 'btn human', onClick: () => submit() }, 'Создать проект')                     ;
+  const footer = h('div', { class: 'wizard-footer' }, back, h('span', { class: 'spacer' }), next, create);
 
   const draw = () => {
     stepsBar.innerHTML = '';
