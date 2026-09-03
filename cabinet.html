@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing Club — вход в личный кабинет</title>
+<style>
+body { margin:0; font:16px/1.6 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color:#111418;
+  background: radial-gradient(rgba(17,20,24,.1) 1px, transparent 1.3px) 0 0/22px 22px, #F7F3EA; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+.card { max-width:520px; background:#fff; border:1.5px solid #111418; border-radius:0; box-shadow:8px 8px 0 0 #E85D00; padding:40px 36px; }
+h1 { font-size:22px; margin:0 0 10px; }
+p { color:#3E434B; margin:0 0 18px; font-size:15px; }
+.mono { font-family:ui-monospace,Menlo,monospace; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+.status { display:flex; align-items:center; gap:10px; margin:0 0 22px; }
+.dot { width:10px; height:10px; border-radius:50%; background:#B7BCC4; }
+.dot.ok { background:#1C7C3C; } .dot.off { background:#C43D2F; }
+code { background:#F1EDE2; border:1px solid #E3DECE; padding:2px 7px; font-size:13px; border-radius:0; }
+a.btn, button.btn { display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:12px 22px; border:0; cursor:pointer;
+  background:#111418; color:#fff; text-decoration:none; font-family:ui-monospace,Menlo,monospace; font-weight:700; font-size:11px; letter-spacing:.07em; text-transform:uppercase; border-radius:0; box-shadow:4px 4px 0 0 #E85D00; }
+a.ghost { display:inline-block; margin-top:16px; color:#3E434B; font-size:13px; }
+[hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="status"><span class="dot" id="dot"></span><span class="mono" id="stateText">Проверяем кабинет…</span></div>
+  <div id="checking">
+    <h1>Входим в личный кабинет</h1>
+    <p>Кабинет Marketing Club работает только на вашем компьютере — данные никуда не отправляются. Секунду, проверяем, запущен ли он.</p>
+  </div>
+  <div id="ready" hidden>
+    <h1>Кабинет запущен</h1>
+    <p>Переводим вас в панель управления проектами…</p>
+    <a class="btn" href="http://127.0.0.1:4310/#/projects">Открыть кабинет →</a>
+  </div>
+  <div id="offline" hidden>
+    <h1>Кабинет сейчас не запущен</h1>
+    <p>Кабинет работает локально на вашем компьютере. Откройте терминал в папке проекта и выполните:</p>
+    <p><code>npm run dev</code></p>
+    <p>Затем вернитесь сюда — страница проверит снова, или откройте <code>127.0.0.1:4310</code> напрямую.</p>
+    <button class="btn" id="retry">Проверить ещё раз</button>
+  </div>
+  <a class="ghost" href="index.html">← Вернуться на лендинг</a>
+</div>
+<script>
+(function () {
+  var dot = document.getElementById('dot'), stateText = document.getElementById('stateText');
+  var checking = document.getElementById('checking'), ready = document.getElementById('ready'), offline = document.getElementById('offline');
+  var CABINET = 'http://127.0.0.1:4310/';
+  function show(el) { checking.hidden = ready.hidden = offline.hidden = true; el.hidden = false; }
+  function probe(auto) {
+    show(checking); dot.className = 'dot'; stateText.textContent = 'Проверяем кабинет…';
+    var ctrl = new AbortController();
+    var t = setTimeout(function () { ctrl.abort(); }, 2500);
+    // no-cors: достаточно знать, что сервер отвечает; содержимое не читается
+    fetch(CABINET, { mode: 'no-cors', signal: ctrl.signal }).then(function () {
+      clearTimeout(t);
+      dot.className = 'dot ok'; stateText.textContent = 'Кабинет на связи';
+      show(ready);
+      if (auto) setTimeout(function () { location.href = CABINET + '#/projects'; }, 900);
+    }).catch(function () {
+      clearTimeout(t);
+      dot.className = 'dot off'; stateText.textContent = 'Кабинет не отвечает';
+      show(offline);
+    });
+  }
+  document.getElementById('retry').addEventListener('click', function () { probe(true); });
+  probe(true);
+})();
+</script>
+</body>
+</html>

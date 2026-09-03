@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing Club — маркетинг ведёт команда, решаете вы</title>
+<!-- Внешний ресурс — только Google Fonts (Inter + JetBrains Mono, как в референсе стиля);
+     при отсутствии сети страница падает на системные шрифты. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;850&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ «Инженерный бланк» — стиль кабинета (реф. lazyweb.com/growth-score) ============ */
+:root {
+  --bg: #F7F3EA;
+  --panel: #FFFFFF;
+  --panel-2: #F1EDE2;
+  --ink: #111418;
+  --ink-2: #3E434B;
+  --ink-3: #6E7076;
+  --line: #D9D3C4;
+  --human: #E85D00;
+  --human-soft: #FFE8D2;
+  --ok: #12805C;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --dur: .18s;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; font: 16px/1.6 var(--sans); color: var(--ink);
+  background:
+    radial-gradient(rgba(17, 20, 24, 0.10) 1px, transparent 1.3px) 0 0 / 22px 22px,
+    var(--bg);
+  overflow-x: hidden; -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--human-soft); }
+:focus-visible { outline: 2.5px solid var(--human); outline-offset: 3px; }
+button, a.btn { cursor: pointer; }
+
+.caps { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+
+/* ============ шапка-бланк ============ */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px clamp(16px, 4vw, 40px);
+  background: var(--panel);
+  border-bottom: 1.5px solid var(--ink);
+}
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.logo .mark { width: 22px; height: 22px; background: linear-gradient(135deg, var(--ink) 0 68%, var(--human) 68%); flex: none; }
+.logo b { font-weight: 850; font-size: 16px; letter-spacing: -0.01em; }
+.logo .sub { font-family: var(--mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); display: block; margin-top: 1px; }
+.topbar .spacer { flex: 1; }
+.toplink { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); text-decoration: none; padding: 10px 12px; }
+.toplink:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+/* ============ кнопки — печатные клавиши ============ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 50px; padding: 14px 24px;
+  border: 1.5px solid var(--ink); background: var(--panel); color: var(--ink);
+  font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  text-decoration: none;
+  transition: transform var(--dur) ease, box-shadow var(--dur) ease;
+  will-change: transform;
+}
+.btn--cta { background: var(--ink); color: #fff; box-shadow: 5px 5px 0 0 var(--human); }
+.btn--cta:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 0 var(--human); }
+.btn--cta:active { transform: translate(2px, 2px); box-shadow: 0 0 0 0 var(--human); }
+.btn--ghost:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 rgba(17, 20, 24, .25); }
+.btn--small { min-height: 42px; padding: 9px 16px; font-size: 11px; }
+.arrow { transition: transform var(--dur); font-family: var(--sans); }
+.btn:hover .arrow { transform: translateX(4px); }
+
+/* ============ герой ============ */
+.hero { position: relative; padding: 112px 24px 46px; }
+.hero__inner { max-width: 880px; margin: 0 auto; text-align: center; position: relative; }
+/* чертёжные углы-метки по краям героя */
+.corner { position: absolute; width: 26px; height: 26px; border: 2.5px solid var(--ink); opacity: .85; }
+.corner--tl { top: -28px; left: -6px; border-right: 0; border-bottom: 0; }
+.corner--tr { top: -28px; right: -6px; border-left: 0; border-bottom: 0; }
+.corner--bl { bottom: -20px; left: -6px; border-right: 0; border-top: 0; }
+.corner--br { bottom: -20px; right: -6px; border-left: 0; border-top: 0; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--ink); background: var(--panel); border: 1.5px solid var(--ink);
+  padding: 7px 14px; margin-bottom: 20px; box-shadow: 3px 3px 0 0 var(--human);
+}
+.eyebrow .dot { width: 8px; height: 8px; background: var(--human); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+h1 {
+  font-weight: 850; font-size: clamp(26px, 4.6vw, 56px); line-height: 1.06; letter-spacing: -0.03em;
+  margin: 0 0 20px;
+}
+h1 .l1 { display: block; white-space: nowrap; }
+h1 .w { display: inline-block; opacity: 0; transform: translateY(24px); }
+.loaded h1 .w { opacity: 1; transform: none; transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+h1 em { font-style: normal; position: relative; white-space: nowrap; }
+h1 em::after { content: ''; position: absolute; left: -1%; right: -1%; bottom: .05em; height: .16em;
+  background: var(--human); z-index: -1; transform: scaleX(0); transform-origin: left; }
+.loaded h1 em::after { transform: scaleX(1); transition: transform .7s cubic-bezier(.2,.7,.2,1) .9s; }
+.hero__sub { font-size: clamp(15px, 1.9vw, 18px); color: var(--ink-2); max-width: 600px; margin: 0 auto 24px; }
+.hero__sub, .hero__cta, .hero__note, .crewline { opacity: 0; transform: translateY(16px); }
+.loaded .hero__sub { opacity: 1; transform: none; transition: all .6s ease .5s; }
+.loaded .hero__cta { opacity: 1; transform: none; transition: all .6s ease .7s; }
+.loaded .hero__note { opacity: 1; transform: none; transition: all .6s ease .9s; }
+.loaded .crewline { opacity: 1; transform: none; transition: all .6s ease 1.05s; }
+.hero__cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.hero__note { margin-top: 14px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+
+/* лента команды — бланк со штампом */
+.crewline { display: flex; justify-content: center; margin-top: 24px; }
+.crewline__box { display: inline-flex; align-items: center; gap: 14px; background: var(--panel);
+  border: 1.5px solid var(--ink); padding: 10px 20px 10px 12px; box-shadow: 4px 4px 0 0 rgba(17, 20, 24, .14); }
+.pts { display: flex; }
+.pt { position: relative; display: inline-block; width: 36px; height: 36px; overflow: hidden;
+  background: var(--panel-2); border: 1.5px solid var(--ink); margin-left: -10px; }
+.pt:first-child { margin-left: 0; }
+.pt i { position: absolute; }
+.pt .head { left: 50%; top: 20%; width: 56%; height: 56%; transform: translateX(-50%); border-radius: 46% 46% 42% 42%; z-index: 2; }
+.pt .hair { left: 50%; top: 12%; width: 62%; height: 30%; transform: translateX(-50%); border-radius: 50% 50% 30% 30%; z-index: 3; }
+.pt .shirt { left: 50%; bottom: -4%; width: 86%; height: 30%; transform: translateX(-50%); border-radius: 46% 46% 0 0; z-index: 4; }
+.crewline__txt { font-size: 13px; color: var(--ink-2); text-align: left; line-height: 1.4; }
+.crewline__txt b { color: var(--ink); font-weight: 700; }
+
+/* ============ секции ============ */
+section { position: relative; padding: 44px 24px; }
+.wrap { max-width: 1000px; margin: 0 auto; }
+.sec-eyebrow { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--human); margin-bottom: 8px; }
+h2 { font-weight: 850; font-size: clamp(24px, 3.6vw, 36px); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 10px; }
+.lead { font-size: clamp(15px, 1.9vw, 18px); color: var(--ink-2); max-width: 640px; }
+
+.rv { opacity: 0; transform: translateY(26px); }
+.rv.in { opacity: 1; transform: none; transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+.rv-stagger > * { opacity: 0; transform: translateY(22px); }
+.rv-stagger.in > * { opacity: 1; transform: none; transition: opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1); }
+.rv-stagger.in > *:nth-child(2) { transition-delay: .1s; }
+.rv-stagger.in > *:nth-child(3) { transition-delay: .2s; }
+.rv-stagger.in > *:nth-child(4) { transition-delay: .3s; }
+
+/* ============ «что это» ============ */
+.about { text-align: center; }
+.about .lead { margin: 0 auto; }
+.about-chips { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+.chip { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink); background: var(--panel); border: 1.5px solid var(--ink); padding: 9px 16px; }
+
+/* ============ шаги ============ */
+.steps { margin-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.step {
+  position: relative; background: var(--panel); border: 1.5px solid var(--ink); padding: 20px 20px;
+  transition: transform var(--dur) ease, box-shadow var(--dur) ease;
+}
+.step:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 0 rgba(17, 20, 24, .18); }
+.step__n { font-family: var(--mono); font-size: 12px; font-weight: 700; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+.step:nth-child(3) .step__n { background: var(--human); box-shadow: none; }
+.step h3 { font-size: 18px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em; }
+.step p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.step .who { margin-top: 14px; font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+.step--you { box-shadow: 5px 5px 0 0 var(--human); }
+.step--you:hover { box-shadow: 7px 7px 0 0 var(--human); }
+
+/* нить маршрута — чертёж */
+.thread { margin: 28px auto 0; max-width: 860px; background: var(--panel); border: 1.5px solid var(--ink); padding: 20px 20px 10px; }
+.thread svg { width: 100%; height: auto; display: block; overflow: visible; }
+.thread .line { stroke: var(--line); stroke-width: 2.5; fill: none; }
+.thread .line-fill { stroke: var(--ink); stroke-width: 2.5; fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.thread.in .line-fill { animation: draw 2.2s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.thread .spark { opacity: 0; }
+.thread.in .spark { opacity: 1; animation: sparkOn 2.2s step-end forwards; }
+@keyframes sparkOn { from { opacity: 1; } }
+.thread .node { fill: var(--panel); stroke: var(--ink); stroke-width: 2; }
+.thread .node--you { fill: var(--human); stroke: var(--ink); }
+.thread text { font: 700 10.5px var(--mono); letter-spacing: .04em; fill: var(--ink-3); text-transform: uppercase; }
+.thread .lbl--you { fill: var(--human); }
+.thread__cap { text-align: center; font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); margin-top: 14px; }
+
+/* ============ что получаете ============ */
+.gets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px; }
+.get { background: var(--panel); border: 1.5px solid var(--ink); overflow: hidden;
+  transition: transform var(--dur) ease, box-shadow var(--dur) ease; }
+.get:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 0 rgba(17, 20, 24, .18); }
+.get__pic { height: 120px; display: flex; align-items: flex-end; padding: 12px 16px; border-bottom: 1.5px solid var(--ink);
+  font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink);
+  background: repeating-linear-gradient(135deg, var(--panel-2) 0 10px, var(--panel) 10px 20px); }
+.get:nth-child(1) .get__pic { background: repeating-linear-gradient(135deg, var(--human-soft) 0 10px, var(--panel) 10px 20px); }
+.get:nth-child(2) .get__pic { background: repeating-linear-gradient(135deg, #E4EFE7 0 10px, var(--panel) 10px 20px); }
+.get:nth-child(3) .get__pic { background: repeating-linear-gradient(135deg, #EFE9DB 0 10px, var(--panel) 10px 20px); }
+.get__body { padding: 15px 18px 18px; }
+.get h3 { margin: 0 0 8px; font-size: 17px; font-weight: 700; }
+.get p { margin: 0; color: var(--ink-2); font-size: 14px; }
+
+/* ============ честные правила ============ */
+.honest { background: var(--panel); border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
+.honest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 22px; }
+.hn { border-left: 3px solid var(--ink); padding-left: 18px; }
+.hn:nth-child(1) { border-color: var(--human); }
+.hn h3 { margin: 0 0 6px; font-size: 16px; font-weight: 700; }
+.hn p { margin: 0; color: var(--ink-2); font-size: 14px; }
+.hn .caps { display: block; margin-bottom: 8px; }
+
+/* ============ финальный CTA — чёрный бланк ============ */
+.final { padding: 52px 24px 60px; }
+.final__panel {
+  position: relative; text-align: center;
+  background: var(--ink); color: #fff;
+  border: 1.5px solid var(--ink);
+  padding: 44px 28px;
+  box-shadow: 10px 10px 0 0 var(--human);
+}
+.final h2 { color: #fff; }
+.final .lead { color: #C9CCD2; margin: 0 auto 24px; }
+.final .caps { color: #9FA3AB; margin-bottom: 14px; display: block; }
+.final .btn--cta { background: #fff; color: var(--ink); border-color: #fff; box-shadow: 5px 5px 0 0 var(--human); }
+.final__foot { margin-top: 20px; font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: #9FA3AB; }
+
+footer { padding: 20px 24px 70px; text-align: center; font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+
+.mobile-cta { display: none; }
+
+/* ============ адаптив ============ */
+@media (max-width: 900px) {
+  .steps, .gets, .honest-grid { grid-template-columns: 1fr; }
+  .hero { padding: 100px 18px 40px; }
+  section { padding: 36px 18px; }
+  .toplink { display: none; }
+  .corner { display: none; }
+}
+@media (max-width: 560px) {
+  .topbar { padding: 10px 14px; }
+  .logo .sub { display: none; }
+  .hero__cta .btn { width: 100%; }
+  .thread { display: none; }
+  .final__panel { padding: 48px 20px; box-shadow: 7px 7px 0 0 var(--human); }
+  .mobile-cta { display: block; position: fixed; left: 12px; right: 12px; z-index: 45;
+    bottom: calc(12px + env(safe-area-inset-bottom)); opacity: 0; transform: translateY(70px); pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease; }
+  .mobile-cta.show { opacity: 1; transform: none; pointer-events: auto; }
+  .mobile-cta .btn { width: 100%; }
+  footer { padding-bottom: 120px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+  h1 .w, .hero__sub, .hero__cta, .hero__note, .crewline, .rv, .rv-stagger > * { opacity: 1 !important; transform: none !important; }
+  .thread .line-fill { stroke-dashoffset: 0 !important; }
+  .thread .spark { opacity: 1 !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="logo" href="#top"><span class="mark"></span><span><b>Marketing Club</b><span class="sub">ваш маркетинговый отдел</span></span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="#how">Как это работает</a>
+  <a class="toplink" href="#honest">Правила</a>
+  <a class="btn btn--cta btn--small" href="cabinet.html">Войти в кабинет</a>
+</header>
+
+<main id="top">
+  <!-- ГЕРОЙ -->
+  <section class="hero" aria-label="Главное">
+    <div class="hero__inner">
+      <span class="corner corner--tl" aria-hidden="true"></span>
+      <span class="corner corner--tr" aria-hidden="true"></span>
+      <span class="corner corner--bl" aria-hidden="true"></span>
+      <span class="corner corner--br" aria-hidden="true"></span>
+      <span class="eyebrow"><span class="dot"></span>Маркетинговая команда для вашего дела</span>
+      <h1 id="kinetic"><span class="l1">Маркетинг ведёт команда.</span> <em>Решаете&nbsp;— вы.</em></h1>
+      <p class="hero__sub">Расскажите о своём деле обычными словами — команда ИИ-специалистов сама предложит план,
+        подготовит публикации и каждый день будет приносить одно понятное действие. Наружу не выйдет ничего без вашего решения.</p>
+      <div class="hero__cta">
+        <a class="btn btn--cta" href="cabinet.html">Войти в личный кабинет <span class="arrow">→</span></a>
+        <a class="btn btn--ghost" href="#how">Как это работает</a>
+      </div>
+      <p class="hero__note">Работает на вашем компьютере · без терминов · публикации только после вашего «да»</p>
+      <div class="crewline">
+        <div class="crewline__box">
+          <span class="pts" id="crew" aria-hidden="true"></span>
+          <span class="crewline__txt"><b>11 специалистов</b> — от исследователя до выпускающего.<br>Работают по понятному маршруту.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЧТО ЭТО -->
+  <section class="about" aria-label="Что это">
+    <div class="wrap rv">
+      <div class="sec-eyebrow">Что это</div>
+      <h2>Личный маркетинговый отдел<br>для небольшого дела</h2>
+      <p class="lead">Ателье, кофейня, студия, частная практика — если вам некогда разбираться в маркетинге,
+        Marketing Club берёт его на себя: разбирается в вашем деле, пишет и планирует публикации,
+        объясняет результаты простыми словами. Вы только отвечаете «подходит» или «исправить».</p>
+      <div class="about-chips rv-stagger">
+        <span class="chip">Без терминов</span>
+        <span class="chip">Одно действие в день</span>
+        <span class="chip">Последнее слово — ваше</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- КАК РАБОТАЕТ -->
+  <section id="how" aria-label="Как это работает">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-eyebrow">Как это работает</div>
+        <h2>Три шага — и маркетинг движется сам</h2>
+      </div>
+      <div class="steps rv-stagger">
+        <div class="step">
+          <span class="step__n">01</span>
+          <h3>Расскажите о деле</h3>
+          <p>Своими словами или ссылкой на сайт: что делаете, для кого, чем гордитесь. Команда сама разберётся и предложит план.</p>
+          <div class="who">≈ 5 минут · один вопрос на экран</div>
+        </div>
+        <div class="step">
+          <span class="step__n">02</span>
+          <h3>Команда готовит</h3>
+          <p>Темы, тексты, короткие видео и план выпусков. Каждый материал проходит проверку фактов, обещаний и стиля.</p>
+          <div class="who">исследователь → редактор → проверяющий</div>
+        </div>
+        <div class="step step--you">
+          <span class="step__n">03</span>
+          <h3>Вы решаете</h3>
+          <p>«Подходит», «исправить» или «вернуться позже» — одно понятное действие в день. Без вашего решения ничего не выходит.</p>
+          <div class="who">решение занимает минуту</div>
+        </div>
+      </div>
+
+      <div class="thread rv" id="thread" aria-hidden="true">
+        <svg viewBox="0 0 860 116">
+          <path class="line" d="M30 52 H830" pathLength="1"/>
+          <path class="line-fill" d="M30 52 H830" pathLength="1"/>
+          <rect class="spark" x="-8" y="-8" width="16" height="16" fill="#fff" stroke="#111418" stroke-width="2.5">
+            <animateMotion dur="2.2s" fill="freeze" path="M30 52 H830" calcMode="spline" keySplines="0.4 0 0.2 1" keyTimes="0;1" keyPoints="0;1"/>
+          </rect>
+          <g>
+            <rect class="node" x="24" y="46" width="12" height="12"/><text x="30" y="86" text-anchor="middle">рассказ</text>
+            <rect class="node" x="184" y="46" width="12" height="12"/><text x="190" y="86" text-anchor="middle">план</text>
+            <rect class="node" x="344" y="46" width="12" height="12"/><text x="350" y="86" text-anchor="middle">тексты</text>
+            <rect class="node" x="504" y="46" width="12" height="12"/><text x="510" y="86" text-anchor="middle">проверка</text>
+            <rect class="node node--you" x="662" y="44" width="16" height="16"/><text class="lbl--you" x="670" y="86" text-anchor="middle">ваше решение</text>
+            <rect class="node" x="824" y="46" width="12" height="12"/><text x="830" y="86" text-anchor="middle">выпуск</text>
+          </g>
+        </svg>
+        <div class="thread__cap">Маршрут каждого материала · оранжевый узел — вы: без него нить не доходит до выпуска</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЧТО ПОЛУЧАЕТЕ -->
+  <section aria-label="Что вы получаете">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-eyebrow">Что вы получаете</div>
+        <h2>Каждую неделю — готовый результат</h2>
+      </div>
+      <div class="gets rv-stagger">
+        <article class="get">
+          <div class="get__pic">Предпросмотр — как увидят подписчики</div>
+          <div class="get__body">
+            <h3>Публикации</h3>
+            <p>Готовые тексты и сценарии коротких видео с предпросмотром под каждую площадку.</p>
+          </div>
+        </article>
+        <article class="get">
+          <div class="get__pic">Что и когда выйдет</div>
+          <div class="get__body">
+            <h3>Понятный план</h3>
+            <p>Календарь выпусков под ваши удобные дни и часы. Перенести — одно действие.</p>
+          </div>
+        </article>
+        <article class="get">
+          <div class="get__pic">Выводы словами, не графиками</div>
+          <div class="get__body">
+            <h3>Честные выводы</h3>
+            <p>Что сработало и что делать дальше — обычным языком. Без придуманных цифр.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЧЕСТНЫЕ ПРАВИЛА -->
+  <section class="honest" id="honest" aria-label="Честные правила">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-eyebrow">Почему нам можно доверять</div>
+        <h2>Три правила, которые не нарушаются</h2>
+      </div>
+      <div class="honest-grid rv-stagger">
+        <div class="hn">
+          <span class="caps">Правило 01</span>
+          <h3>Последнее слово — ваше</h3>
+          <p>Ни одна публикация не выходит без вашего решения. Автопубликации нет и не будет.</p>
+        </div>
+        <div class="hn">
+          <span class="caps">Правило 02</span>
+          <h3>Данные — у вас</h3>
+          <p>Кабинет работает на вашем компьютере. Ваши материалы никуда не отправляются.</p>
+        </div>
+        <div class="hn">
+          <span class="caps">Правило 03</span>
+          <h3>Без золотых гор</h3>
+          <p>Не обещаем «взрывного роста». Каждый факт проверяется, обещания результата запрещены правилами команды.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ФИНАЛЬНЫЙ CTA -->
+  <section class="final" aria-label="Вход">
+    <div class="wrap rv">
+      <div class="final__panel">
+        <span class="caps">Ваш кабинет готов</span>
+        <h2>Загляните в свой кабинет</h2>
+        <p class="lead">Один экран — и видно, что делает команда, что требуется от вас<br>и какой результат будет следующим.</p>
+        <a class="btn btn--cta" href="cabinet.html">Войти в личный кабинет <span class="arrow">→</span></a>
+        <div class="final__foot">Личный кабинет — следующий шаг нашей совместной работы</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Marketing Club · локальный прототип лендинга · синтетические данные · аккаунты и публикации не подключены
+</footer>
+
+<div class="mobile-cta" id="mobileCta">
+  <a class="btn btn--cta" href="cabinet.html">Войти в личный кабинет <span class="arrow">→</span></a>
+</div>
+
+<script>
+(function () {
+'use strict';
+var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* кинетический заголовок */
+var h1 = document.getElementById('kinetic');
+(function splitWords(node) {
+  [].slice.call(node.childNodes).forEach(function (ch) {
+    if (ch.nodeType === 3) {
+      var frag = document.createDocumentFragment();
+      ch.textContent.split(/\s+/).forEach(function (w, i, arr) {
+        if (!w) return;
+        var s = document.createElement('span');
+        s.className = 'w'; s.textContent = w;
+        frag.appendChild(s);
+        if (i < arr.length - 1) frag.appendChild(document.createTextNode(' '));
+      });
+      node.replaceChild(frag, ch);
+    } else if (ch.nodeType === 1) splitWords(ch);
+  });
+})(h1);
+h1.querySelectorAll('.w').forEach(function (w, i) { w.style.transitionDelay = (0.1 + i * 0.08) + 's'; });
+requestAnimationFrame(function () { requestAnimationFrame(function () { document.body.classList.add('loaded'); }); });
+
+/* портреты команды */
+var SKINS = ['#d9a884', '#c98f6b', '#e8bd9a'];
+var HAIRS = ['#3a2e26', '#20242e', '#6b503a', '#8a8480'];
+var SHIRTS = ['#111418', '#3E434B', '#E85D00', '#12805C', '#6E7076'];
+var crew = document.getElementById('crew');
+for (var i = 0; i < 5; i++) {
+  var pt = document.createElement('span'); pt.className = 'pt';
+  var head = document.createElement('i'); head.className = 'head'; head.style.background = SKINS[i % 3];
+  var hair = document.createElement('i'); hair.className = 'hair'; hair.style.background = HAIRS[i % 4];
+  if (i % 2) hair.style.height = '24%';
+  var shirt = document.createElement('i'); shirt.className = 'shirt'; shirt.style.background = SHIRTS[i % 5];
+  pt.appendChild(head); pt.appendChild(hair); pt.appendChild(shirt);
+  crew.appendChild(pt);
+}
+
+/* появление секций */
+var io = new IntersectionObserver(function (entries) {
+  entries.forEach(function (e) {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.18 });
+document.querySelectorAll('.rv, .rv-stagger, .thread').forEach(function (el) { io.observe(el); });
+
+/* магнитная главная кнопка (мышь) */
+if (!REDUCED && window.matchMedia('(pointer:fine)').matches) {
+  document.querySelectorAll('.btn--cta').forEach(function (btn) {
+    btn.addEventListener('mousemove', function (e) {
+      var r = btn.getBoundingClientRect();
+      var dx = (e.clientX - r.left - r.width / 2) / r.width;
+      var dy = (e.clientY - r.top - r.height / 2) / r.height;
+      btn.style.transform = 'translate(' + (dx * 5 - 2) + 'px,' + (dy * 5 - 2) + 'px)';
+    });
+    btn.addEventListener('mouseleave', function () { btn.style.transform = ''; });
+  });
+}
+
+/* закреплённая мобильная кнопка */
+var mobileCta = document.getElementById('mobileCta');
+var hero = document.querySelector('.hero');
+function updateMobileCta() {
+  mobileCta.classList.toggle('show', window.scrollY > hero.offsetHeight * 0.75);
+}
+window.addEventListener('scroll', updateMobileCta, { passive: true });
+updateMobileCta();
+})();
+</script>
+</body>
+</html>
