@@ -34,11 +34,11 @@ a.ghost { display:inline-block; margin-top:16px; color:#3E434B; font-size:13px; 
     <a class="btn" href="http://127.0.0.1:4310/#/projects">Открыть кабинет →</a>
   </div>
   <div id="offline" hidden>
-    <h1>Кабинет сейчас не запущен</h1>
-    <p>Кабинет работает локально на вашем компьютере. Откройте терминал в папке проекта и выполните:</p>
-    <p><code>npm run dev</code></p>
-    <p>Затем вернитесь сюда — страница проверит снова, или откройте <code>127.0.0.1:4310</code> напрямую.</p>
-    <button class="btn" id="retry">Проверить ещё раз</button>
+    <h1>Кабинет не ответил на проверку</h1>
+    <p>Такое бывает по двум причинам: панель не запущена, или браузер не даёт публичной странице опрашивать локальный адрес. Попробуйте открыть напрямую:</p>
+    <p><a class="btn" href="http://127.0.0.1:4310/#/projects">Открыть кабинет напрямую →</a></p>
+    <p>Если не открылось — панель не запущена: в терминале в папке проекта выполните <code>npm run dev</code> и вернитесь сюда.</p>
+    <button class="btn" id="retry" style="background:#3E434B">Проверить ещё раз</button>
   </div>
   <a class="ghost" href="index.html">← Вернуться на лендинг</a>
 </div>
@@ -51,9 +51,13 @@ a.ghost { display:inline-block; margin-top:16px; color:#3E434B; font-size:13px; 
   function probe(auto) {
     show(checking); dot.className = 'dot'; stateText.textContent = 'Проверяем кабинет…';
     var ctrl = new AbortController();
-    var t = setTimeout(function () { ctrl.abort(); }, 2500);
-    // no-cors: достаточно знать, что сервер отвечает; содержимое не читается
-    fetch(CABINET, { mode: 'no-cors', signal: ctrl.signal }).then(function () {
+    var t = setTimeout(function () { ctrl.abort(); }, 3500);
+    // Панель отвечает на /health с CORS-заголовками для этого сайта (и разрешением
+    // Private Network Access) — поэтому проверка работает и с публичной страницы.
+    fetch(CABINET + 'health', { signal: ctrl.signal }).then(function (r) {
+      if (!r.ok) throw new Error('bad status');
+      return r;
+    }).then(function () {
       clearTimeout(t);
       dot.className = 'dot ok'; stateText.textContent = 'Кабинет на связи';
       show(ready);
