@@ -34,7 +34,7 @@ export function createConnectors(options                   = {})                
     id, name, platforms, mode: 'mock', publish: mockPublish(id, options),
   });
   return {
-    'wumu': make('wumu', 'WŬMÙ Office (mock)', ['vk', 'telegram', 'facebook', 'instagram', 'tiktok']),
+    'wumu': make('wumu', 'WŬMÙ Office (mock)', ['vk', 'telegram', 'facebook', 'instagram', 'tiktok', 'dzen', 'ok', 'rutube']),
     'postu': make('postu', 'Postu (mock)', ['vk', 'telegram', 'facebook', 'instagram']),
     'native-vk': make('native-vk', 'VK API (mock)', ['vk']),
     'meta': make('meta', 'Meta Graph API (mock)', ['facebook', 'instagram']),

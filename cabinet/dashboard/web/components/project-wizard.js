@@ -71,7 +71,7 @@ function build(app     , tpl     , holder             , m                       
       const url = h('input', { value: (d       ).websiteUrl ?? '', placeholder: 'https://ваш-сайт.ru (необязательно)', class: 'mono' })                    ;
       const own = h('textarea', { rows: 3, placeholder: 'Добавьте от себя: что продвигаем, для кого, что важно не упустить…' }, (d       ).ownerNote ?? '')                       ;
       const out = h('div', { class: 'stack', hidden: true });
-      const applySuggestions = (nameGuess               , description               , geography                , lang                ) => {
+      const applySuggestions = (nameGuess               , description               , geography                , lang                , audienceGuess                , niche                ) => {
         const note = own.value.trim();
         if (nameGuess && !d.name) { d.name = nameGuess; d.id = slugify(nameGuess); }
         if (geography && !d.geography) d.geography = geography;
@@ -79,12 +79,22 @@ function build(app     , tpl     , holder             , m                       
         const wantsVideo = /видео|reels|рилс|tiktok|тикток|ролик/i.test(note + ' ' + (description ?? ''));
         const preset = tpl.presets.find((p     ) => p.id === (wantsVideo ? 'reels' : 'social')) ?? tpl.presets[0];
         d.roles = [...preset.roles];
-        if (!d.audience) d.audience = description
+        if (niche) (d       ).niche = niche;
+        if (!d.audience) d.audience = audienceGuess
+          ? `${audienceGuess.charAt(0).toUpperCase()}${audienceGuess.slice(1)}. Подобрали по тематике сайта${niche ? ` («${niche}»)` : ''} — уточните под себя.`
+          : description
           ? `По описанию сайта: ${description.slice(0, 220)}${description.length > 220 ? '…' : ''} — уточните, кто именно ваш клиент.`
           : `Черновик: клиенты «${d.name || 'проекта'}»${d.geography ? ` в ${d.geography}` : ''}, которые ищут эту услугу рядом и сравнивают по отзывам. Уточните своими словами.`;
         if (!d.tone) d.tone = 'Дружелюбно и по делу: объясняем, показываем работу, не давим скидками (черновик — поправьте под себя)';
-        const socials = ['vk', 'telegram', 'instagram'];
-        d.channels = tpl.platforms.filter((p     ) => socials.includes(p.platform)).map((p     ) => ({ platform: p.platform, name: `${p.label ?? p.platform} проекта (пока не подключено)`, connectorId: p.connectorId }));
+        // Площадки по географии (решение владельца 03.09): в России Instagram заблокирован,
+        // Telegram с 02.2026 ограничен РКН и запрещён для рекламы (ФАС) — не предлагаем;
+        // работают ВКонтакте, TikTok, Дзен, Одноклассники.
+        const isRu = d.language === 'ru' || !!d.geography;
+        const socials = isRu ? ['vk', 'tiktok', 'dzen', 'ok'] : ['instagram', 'tiktok', 'facebook'];
+        d.channels = socials
+          .map((pl) => tpl.platforms.find((p     ) => p.platform === pl))
+          .filter(Boolean)
+          .map((p     ) => ({ platform: p.platform, name: `${PLATFORM_LABEL[p.platform] ?? p.platform} проекта (пока не подключено)`, connectorId: p.connectorId }));
         if (note && !d.goals.includes(note)) d.goals = [note, ...d.goals];
         return preset;
       };
@@ -107,7 +117,7 @@ function build(app     , tpl     , holder             , m                       
         try {
           const { audit } = await api.analyzeSite(raw);
           (d       ).audit = audit;
-          const preset = applySuggestions(audit.suggest.name, audit.suggest.description, audit.suggest.geography, audit.suggest.lang);
+          const preset = applySuggestions(audit.suggest.name, audit.suggest.description, audit.suggest.geography, audit.suggest.lang, audit.suggest.audience, audit.suggest.niche);
           const issues = audit.checks.filter((c     ) => c.status !== 'ok');
           const issueBox = h('input', { type: 'checkbox', checked: issues.length > 0 })                    ;
           (d       ).issueBox = issueBox;
@@ -131,9 +141,12 @@ function build(app     , tpl     , holder             , m                       
             issues.length ? h('label', { class: 'check', style: { marginTop: '10px' } }, issueBox,
               `после создания поручить ${Math.min(issues.length, 6)} замечаний команде (идеи для SEO-стратега Сони)`) : null));
           out.appendChild(h('div', { class: 'callout human' }, h('b', null, 'Как предлагаем вести проект: '),
+            (d       ).niche ? h('div', { style: { marginTop: '4px' } }, h('b', null, 'Тематика: '), (d       ).niche) : null,
             h('div', { style: { marginTop: '4px' } }, h('b', null, 'Кто ваш клиент: '), d.audience),
             h('div', { style: { marginTop: '4px' } }, h('b', null, 'Направление: '), `«${preset.name}» — ${preset.kindLabels.join(', ')}; команда из ${d.roles.length} специалистов.`),
-            h('div', { style: { marginTop: '4px' } }, h('b', null, 'Площадки: '), 'ВКонтакте, Телеграм, Instagram + статьи на сайт под поисковый спрос.'),
+            h('div', { style: { marginTop: '4px' } }, h('b', null, 'Площадки: '),
+              d.channels.map((c) => PLATFORM_LABEL[c.platform] ?? c.platform).join(', ') + ' + статьи на сайт под поисковый спрос.',
+              (d.language === 'ru' || d.geography) ? ' Instagram и Telegram не предлагаем — в России заблокированы для продвижения.' : ''),
             d.geography ? h('div', { style: { marginTop: '4px' } }, h('b', null, 'География: '), `${d.geography} — нашли на сайте, поправьте если не так.`) : null,
             h('div', { style: { marginTop: '4px' } }, h('b', null, 'Ритм: '), `${tpl.defaults.frequencyPerWeek} выхода в неделю; первые шаги — пост-знакомство, серия про услуги${issues.length ? ' и исправление замечаний по сайту' : ''}.`),
             audit.platform ? h('div', { style: { marginTop: '4px' } }, h('b', null, `Сайт на ${audit.platform.name}: `), `${audit.platform.publishNote}.`) : null,
@@ -207,7 +220,9 @@ function build(app     , tpl     , holder             , m                       
     }, collect: () => null },
 
     { title: 'Цель, аудитория, каналы', render: () => {
-      const goals = chipEditor(d.goals, 'цель и Enter');
+      // «Цели проекта» убраны (замечание владельца 03.09): цель всегда одна — привлечение
+      // аудитории и заявок; пожелания владельца из шага 1 добавляются к ней автоматически.
+      if (!d.goals.length) d.goals = ['Привлечение аудитории и заявок'];
       const audience = h('textarea', { rows: 3, placeholder: 'кто читает и что ему важно (пусто — TODO)' }, d.audience)                       ;
       const rows                                                                                                           = [];
       const list = h('div', { class: 'stack wizard-channels' });
@@ -224,13 +239,13 @@ function build(app     , tpl     , holder             , m                       
       };
       for (const c of d.channels) addRow(c);
       steps[2].collect = () => {
-        d.goals = goals.values(); d.audience = audience.value.trim();
+        d.audience = audience.value.trim();
         d.channels = rows.map((r) => ({ platform: r.platform.value, name: r.name.value.trim(), connectorId: r.connector.value }));
         for (const c of d.channels) { if (!c.name) return 'У каждого канала должно быть название'; if (/(https?:\/\/|www\.|t\.me\/|@[a-z0-9_]{3,})/i.test(c.name)) return `Канал «${c.name}»: ссылки и имена учётных записей не вводятся`; }
         return null;
       };
       return h('div', { class: 'form' },
-        h('label', null, 'Цели проекта', goals.el), h('label', null, 'Аудитория', audience),
+        h('label', null, 'Аудитория', audience),
         h('div', null, h('div', { class: 'row', style: { justifyContent: 'space-between' } }, h('span', { class: 'muted small' }, 'Каналы (mock-описания; подключение аккаунтов — отдельным решением)'), h('button', { type: 'button', class: 'btn sm', onClick: () => addRow({ platform: tpl.platforms[0].platform, name: '', connectorId: tpl.platforms[0].connectorId }) }, '＋ Канал')), list));
     }, collect: () => null },
 

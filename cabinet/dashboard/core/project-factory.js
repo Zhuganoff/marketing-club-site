@@ -54,9 +54,9 @@ export const ID_RULE = /^[a-z][a-z0-9-]{1,40}$/;
 export const RESERVED_IDS = ['api', 'runtime', 'template', 'new', 'catalog'];
 export const LOCKED_ROLES           = ['marketing-director', 'publisher-executor'];
 // Площадка → mock-коннектор по умолчанию. Только площадки, для которых есть mock-коннектор.
-export const DEFAULT_CONNECTOR                                         = { vk: 'native-vk', telegram: 'postu', facebook: 'meta', instagram: 'meta', tiktok: 'tiktok' };
+export const DEFAULT_CONNECTOR                                         = { vk: 'native-vk', telegram: 'postu', facebook: 'meta', instagram: 'meta', tiktok: 'tiktok', dzen: 'wumu', ok: 'wumu', rutube: 'wumu' };
 export const CONNECTOR_PLATFORMS                                  = {
-  'wumu': ['vk', 'telegram', 'facebook', 'instagram', 'tiktok'], 'postu': ['vk', 'telegram', 'facebook', 'instagram'],
+  'wumu': ['vk', 'telegram', 'facebook', 'instagram', 'tiktok', 'dzen', 'ok', 'rutube'], 'postu': ['vk', 'telegram', 'facebook', 'instagram'],
   'native-vk': ['vk'], 'meta': ['facebook', 'instagram'], 'tiktok': ['tiktok'],
 };
 export const PROJECT_DEFAULTS = { language: 'ru'         , timezone: 'Europe/Moscow', weeklyLimitUsd: 60, approvers: ['Владелец проекта'], frequencyPerWeek: 3, preferredHours: ['11:00', '19:00'] };

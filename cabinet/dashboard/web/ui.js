@@ -63,8 +63,8 @@ export const COLUMNS = Object.keys(COLUMN_LABEL);
 export const KIND_LABEL                         = { post: 'Пост', reels: 'Reels', seo_page: 'SEO-страница', weekly_report: 'Недельный отчёт' };
 export const ART_KIND                         = { task_plan: 'план', strategy_brief: 'стратегический бриф', research_brief: 'исследовательский бриф', seo_task: 'SEO-задание', draft: 'текст', creative_concept: 'визуальная концепция', reel_brief: 'раскадровка Reels', channel_versions: 'версии под каналы', quality_report: 'отчёт контролёра', weekly_report: 'недельный отчёт', publish_job: 'задание публикации' };
 export const KIND_COLOR                         = { post: 'var(--kind-post)', reels: 'var(--kind-reels)', seo_page: 'var(--kind-article)', weekly_report: 'var(--kind-report)', campaign: 'var(--kind-campaign)' };
-export const PLATFORM_LABEL                         = { vk: 'VK', telegram: 'Telegram', instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', youtube: 'YouTube', site: 'Сайт' };
-export const PLATFORMS = ['vk', 'telegram', 'instagram', 'facebook', 'tiktok', 'youtube'];
+export const PLATFORM_LABEL                         = { vk: 'ВКонтакте', telegram: 'Telegram', instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', youtube: 'YouTube', dzen: 'Дзен', ok: 'Одноклассники', rutube: 'Rutube', site: 'Сайт' };
+export const PLATFORMS = ['vk', 'telegram', 'instagram', 'facebook', 'tiktok', 'youtube', 'dzen', 'ok', 'rutube'];
 export const ART_STATUS_SHORT                         = { DRAFT: 'черновик', IN_REVIEW: 'на согласовании', APPROVED: 'запланировано', SCHEDULED: 'запланировано', PUBLISHING: 'публикуется', PUBLISHED: 'опубликовано', FAILED: 'ошибка' };
 export function dateKey(iso                           )         { return iso ? String(iso).slice(0, 10) : ''; }
 export function timeOf(iso                           )         { return iso && String(iso).length >= 16 ? String(iso).slice(11, 16) : '—'; }
