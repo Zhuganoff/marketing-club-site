@@ -19,8 +19,24 @@ const MAX_REDIRECTS = 3;
                                                        
                       
                                 
-                                                                                                        
+                                                                                                                                                            
   
+
+// География по тексту страницы (замечание владельца 03.09: систему предлагает — пользователь правит).
+// Только честный поиск названий городов в тексте; ничего не выдумывается.
+const RU_CITIES = ['Москва', 'Санкт-Петербург', 'Новосибирск', 'Екатеринбург', 'Казань', 'Нижний Новгород', 'Челябинск', 'Самара', 'Омск', 'Ростов-на-Дону', 'Уфа', 'Красноярск', 'Воронеж', 'Пермь', 'Волгоград', 'Краснодар', 'Саратов', 'Тюмень', 'Тольятти', 'Ижевск', 'Барнаул', 'Ульяновск', 'Иркутск', 'Хабаровск', 'Ярославль', 'Владивосток', 'Махачкала', 'Томск', 'Оренбург', 'Кемерово', 'Новокузнецк', 'Рязань', 'Астрахань', 'Пенза', 'Липецк', 'Киров', 'Чебоксары', 'Калининград', 'Тула', 'Ставрополь', 'Сочи', 'Курск', 'Тверь', 'Сургут', 'Белгород', 'Иваново', 'Брянск', 'Владимир', 'Архангельск', 'Чита', 'Тамбов', 'Вологда', 'Смоленск', 'Калуга', 'Севастополь', 'Симферополь', 'Мурманск', 'Псков', 'Великий Новгород', 'Петрозаводск'];
+export function detectGeography(text        )                {
+  if (/по всей России/i.test(text)) return 'вся Россия';
+  const found                                    = [];
+  for (const city of RU_CITIES) {
+    // Основа без последней гласной покрывает падежи: «в Москве», «по Казани», «Перми».
+    const stem = city.replace(/[аяьий]$/i, '').replace(/[-]/g, '[-\\s]?');
+    const m = text.match(new RegExp(stem, 'gi'));
+    if (m) found.push({ city, count: m.length });
+  }
+  found.sort((a, b) => b.count - a.count);
+  return found.length ? found.slice(0, 2).map((f) => f.city).join(', ') : null;
+}
 
 // Определение платформы сайта (решение владельца 03.09): подсказывает, каким способом
 // SEO-модуль сможет публиковать статьи, когда интеграции будут разрешены. Только чтение
@@ -204,10 +220,14 @@ export async function analyzeSite(rawUrl        )                     {
   const warnCount = checks.filter((c) => c.status === 'warn').length;
   const errCount = checks.filter((c) => c.status === 'err').length;
   const score = Math.max(5, Math.min(100, 100 - errCount * 12 - warnCount * 4));
-  const nameFromTitle = title ? title.split(/[—|–-]/)[0].trim().slice(0, 60) : null;
+  const nameFromTitle = title ? title.split(/[—|–\-\\/•·:]/)[0].trim().slice(0, 60) : null;
   return {
     url: u.toString(), finalUrl, score, tookMs: Date.now() - started,
     okCount, warnCount, errCount, checks, platform,
-    suggest: { name: nameFromTitle || (h1 ? h1.slice(0, 60) : null), title: title || null, h1: h1 || null, description: desc || null },
+    suggest: {
+      name: nameFromTitle || (h1 ? h1.slice(0, 60) : null), title: title || null, h1: h1 || null, description: desc || null,
+      geography: detectGeography(strip(body.slice(0, 400_000))),
+      lang: /<html[^>]+lang\s*=\s*["']?en/i.test(head) ? 'en' : /<html[^>]+lang\s*=\s*["']?ru/i.test(head) ? 'ru' : null,
+    },
   };
 }

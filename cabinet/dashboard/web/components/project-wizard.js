@@ -49,13 +49,13 @@ export function openProjectWizard(app     ) {
 
 function build(app     , tpl     , holder             , m                       ) {
   const d        = {
-    id: '', name: '', language: tpl.defaults.language, timezone: tpl.defaults.timezone, geography: '',
+    // Часовой пояс берём из браузера пользователя автоматически (замечание владельца 03.09).
+    id: '', name: '', language: tpl.defaults.language, timezone: (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || tpl.defaults.timezone; } catch { return tpl.defaults.timezone; } })(), geography: '',
     goals: [], audience: '', channels: [], tone: '', forbiddenPhrases: [], evidenceRules: [],
     // Состав по умолчанию — стартовый набор сервера (минимальный), а не весь каталог.
     roles: [...(tpl.presets.find((p     ) => p.id === tpl.defaultPreset)?.roles ?? tpl.presets[0].roles)], weeklyLimitUsd: tpl.defaults.weeklyLimitUsd, approvers: [...tpl.defaults.approvers],
     frequencyPerWeek: tpl.defaults.frequencyPerWeek, preferredHours: [...tpl.defaults.preferredHours],
   };
-  let idTouched = false;
   let current = 0;
   const error = h('div', { class: 'callout err', hidden: true });
   const showError = (msg               ) => { error.hidden = !msg; error.textContent = msg ?? ''; };
@@ -69,9 +69,11 @@ function build(app     , tpl     , holder             , m                       
       const url = h('input', { value: (d       ).websiteUrl ?? '', placeholder: 'https://ваш-сайт.ru (необязательно)', class: 'mono' })                    ;
       const own = h('textarea', { rows: 3, placeholder: 'Добавьте от себя: что продвигаем, для кого, что важно не упустить…' }, (d       ).ownerNote ?? '')                       ;
       const out = h('div', { class: 'stack', hidden: true });
-      const applySuggestions = (nameGuess               , description               ) => {
+      const applySuggestions = (nameGuess               , description               , geography                , lang                ) => {
         const note = own.value.trim();
         if (nameGuess && !d.name) { d.name = nameGuess; d.id = slugify(nameGuess); }
+        if (geography && !d.geography) d.geography = geography;
+        if (lang === 'en' || lang === 'ru') d.language = lang;
         const wantsVideo = /видео|reels|рилс|tiktok|тикток|ролик/i.test(note + ' ' + (description ?? ''));
         const preset = tpl.presets.find((p     ) => p.id === (wantsVideo ? 'reels' : 'social')) ?? tpl.presets[0];
         d.roles = [...preset.roles];
@@ -94,7 +96,7 @@ function build(app     , tpl     , holder             , m                       
         try {
           const { audit } = await api.analyzeSite(raw);
           (d       ).audit = audit;
-          const preset = applySuggestions(audit.suggest.name, audit.suggest.description);
+          const preset = applySuggestions(audit.suggest.name, audit.suggest.description, audit.suggest.geography, audit.suggest.lang);
           const issues = audit.checks.filter((c     ) => c.status !== 'ok');
           const issueBox = h('input', { type: 'checkbox', checked: issues.length > 0 })                    ;
           (d       ).issueBox = issueBox;
@@ -121,6 +123,7 @@ function build(app     , tpl     , holder             , m                       
             h('div', { style: { marginTop: '4px' } }, h('b', null, 'Кто ваш клиент: '), d.audience),
             h('div', { style: { marginTop: '4px' } }, h('b', null, 'Направление: '), `«${preset.name}» — ${preset.kindLabels.join(', ')}; команда из ${d.roles.length} специалистов.`),
             h('div', { style: { marginTop: '4px' } }, h('b', null, 'Площадки: '), 'ВКонтакте, Телеграм, Instagram + статьи на сайт под поисковый спрос.'),
+            d.geography ? h('div', { style: { marginTop: '4px' } }, h('b', null, 'География: '), `${d.geography} — нашли на сайте, поправьте если не так.`) : null,
             h('div', { style: { marginTop: '4px' } }, h('b', null, 'Ритм: '), `${tpl.defaults.frequencyPerWeek} выхода в неделю; первые шаги — пост-знакомство, серия про услуги${issues.length ? ' и исправление замечаний по сайту' : ''}.`),
             audit.platform ? h('div', { style: { marginTop: '4px' } }, h('b', null, `Сайт на ${audit.platform.name}: `), `${audit.platform.publishNote}.`) : null,
             h('div', { class: 'muted small', style: { marginTop: '6px' } }, 'Это черновик стратегии — дополните ниже своими словами, всё правится на следующих шагах.')));
@@ -155,19 +158,27 @@ function build(app     , tpl     , holder             , m                       
     }, collect: () => null },
 
     { title: 'Основное', render: () => {
+      // Замечание владельца 03.09: техполей нет — идентификатор и часовой пояс создаются сами,
+      // название и география подставляются из анализа сайта, пользователь только правит.
       const name = h('input', { value: d.name, placeholder: 'Название проекта или бренда', required: true })                    ;
-      const id = h('input', { value: d.id, placeholder: 'id латиницей, например my-brand', pattern: ID_RULE.source, class: 'mono' })                    ;
-      name.addEventListener('input', () => { if (!idTouched) id.value = slugify(name.value); });
-      id.addEventListener('input', () => { idTouched = id.value.trim() !== ''; });
       const language = h('select', null, h('option', { value: 'ru', selected: d.language === 'ru' }, 'ru — русский'), h('option', { value: 'en', selected: d.language === 'en' }, 'en — English'))                     ;
-      const timezone = h('input', { value: d.timezone, placeholder: 'Region/City' })                    ;
-      const geography = h('input', { value: d.geography, placeholder: 'город, страна или регион (можно оставить пустым — будет TODO)' })                    ;
-      const collect = () => { d.name = name.value.trim(); d.id = id.value.trim(); d.language = language.value               ; d.timezone = timezone.value.trim(); d.geography = geography.value.trim(); };
-      steps[1].collect = () => { collect(); if (!d.name) return 'Укажите название проекта'; if (!ID_RULE.test(d.id) || d.id.startsWith('_')) return 'id: латиница в нижнем регистре, цифры и дефис (2–41 символа), первый символ — буква'; if (app.projects.some((p) => p.id === d.id)) return `Проект с id «${d.id}» уже есть`; if (!TZ_RULE.test(d.timezone)) return 'Часовой пояс в формате Region/City'; return null; };
+      const geography = h('input', { value: d.geography, placeholder: 'город или регион — подставим из сайта, можно поправить' })                    ;
+      steps[1].collect = () => {
+        d.name = name.value.trim(); d.language = language.value               ; d.geography = geography.value.trim();
+        if (!d.name) return 'Укажите название проекта';
+        let id = slugify(d.name) || 'project';
+        if (id.length < 2) id = 'project';
+        let unique = id; let n = 2;
+        while (app.projects.some((p) => p.id === unique)) unique = `${id}-${n++}`.slice(0, 41);
+        d.id = unique;
+        if (!TZ_RULE.test(d.timezone)) d.timezone = tpl.defaults.timezone;
+        return null;
+      };
       return h('div', { class: 'form' },
-        h('label', null, 'Название', name), h('label', null, 'Идентификатор (имя папки projects/<id>)', id),
-        h('div', { class: 'grid two' }, h('label', null, 'Язык', language), h('label', null, 'Часовой пояс', timezone)),
-        h('label', null, 'География', geography));
+        h('label', null, d.name ? 'Название (взяли из сайта — можно поправить)' : 'Название', name),
+        h('div', { class: 'grid two' },
+          h('label', null, 'Язык публикаций', language),
+          h('label', null, d.geography ? 'География (нашли на сайте)' : 'География', geography)));
     }, collect: () => null },
 
     { title: 'Цель, аудитория, каналы', render: () => {
@@ -187,7 +198,7 @@ function build(app     , tpl     , holder             , m                       
         rows.push(row); list.appendChild(row.el);
       };
       for (const c of d.channels) addRow(c);
-      steps[1].collect = () => {
+      steps[2].collect = () => {
         d.goals = goals.values(); d.audience = audience.value.trim();
         d.channels = rows.map((r) => ({ platform: r.platform.value, name: r.name.value.trim(), connectorId: r.connector.value }));
         for (const c of d.channels) { if (!c.name) return 'У каждого канала должно быть название'; if (/(https?:\/\/|www\.|t\.me\/|@[a-z0-9_]{3,})/i.test(c.name)) return `Канал «${c.name}»: ссылки и имена учётных записей не вводятся`; }
