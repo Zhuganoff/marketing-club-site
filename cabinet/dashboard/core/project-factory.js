@@ -3,9 +3,9 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from '../_shim/node.js';
 import { join, resolve, sep } from '../_shim/node.js';
                                                                                             
-import { DomainError, ROLE_ORDER } from './types.js';
+import { DomainError, ROLE_ORDER } from './types.js?v=mtlq3kut';
                                              
-import { KIND_LABELS, ROUTES } from './workflow.js';
+import { KIND_LABELS, ROUTES } from './workflow.js?v=mtlq3kut';
 
 const byOrder = (a        , b        ) => ROLE_ORDER.indexOf(a) - ROLE_ORDER.indexOf(b);
 const orderedRoles = (catalog         )           => [...catalog.keys()].sort(byOrder);

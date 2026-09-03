@@ -1,8 +1,8 @@
 // Настройки проекта: mock-редактирование профиля, стиля, команд, лимита и mock-статусов каналов.
                                      
-import { api } from '../api.js';
-import { h, badge, statusBadge, modal, usd, chipEditor, fmtDate, STATUS_LABEL, TEAM_LABEL, PLATFORM_LABEL } from '../ui.js';
-import { openProjectWizard } from '../components/project-wizard.js';
+import { api } from '../api.js?v=mtlq3kut';
+import { h, badge, statusBadge, modal, usd, chipEditor, fmtDate, STATUS_LABEL, TEAM_LABEL, PLATFORM_LABEL } from '../ui.js?v=mtlq3kut';
+import { openProjectWizard } from '../components/project-wizard.js?v=mtlq3kut';
 
 function dirtyMark()              { return h('span', { class: 'badge warn dirty', hidden: true }, 'изменено'); }
 function watch(card             , mark             ) { card.addEventListener('input', () => { mark.hidden = false; }); card.addEventListener('change', () => { mark.hidden = false; }); }

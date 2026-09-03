@@ -1,8 +1,8 @@
 // Кампании: цель, период, каналы, UTM и связи с задачами, материалами и публикациями.
                                                                 
-import { DomainError } from './types.js';
-import { nextId } from './ids.js';
-import { pushEvent } from './events.js';
+import { DomainError } from './types.js?v=mtlq3kut';
+import { nextId } from './ids.js?v=mtlq3kut';
+import { pushEvent } from './events.js?v=mtlq3kut';
 
                                                                                                                                                                                                
 

@@ -1,8 +1,8 @@
 // Мастер создания проекта: шесть шагов, локальный mock-режим. Поля — только профиль (без ключей, аккаунтов, ссылок и сети).
 // Данные для шагов (площадки, роли, модели, лимиты, значения по умолчанию) приходят с сервера: GET /api/projects/template.
                                      
-import { api, ApiError } from '../api.js';
-import { h, modal, toast, badge, usd, chipEditor, PLATFORM_LABEL, TEAM_LABEL } from '../ui.js';
+import { api, ApiError } from '../api.js?v=mtlq3kut';
+import { h, modal, toast, badge, usd, chipEditor, PLATFORM_LABEL, TEAM_LABEL } from '../ui.js?v=mtlq3kut';
 
               
                                                                                        

@@ -1,16 +1,16 @@
 // Обработчики /api/*. Транспорт-независимы: получают метод, путь, тело; возвращают объект.
                                               
-import { ARCHIVE_TTL_DAYS, MODEL_LABELS } from '../core/store.js';
-import { analyzeSite } from './site-audit.js';
-import { DomainError } from '../core/types.js';
+import { ARCHIVE_TTL_DAYS, MODEL_LABELS } from '../core/store.js?v=mtlq3kut';
+import { analyzeSite } from './site-audit.js?v=mtlq3kut';
+import { DomainError } from '../core/types.js?v=mtlq3kut';
                                                                            
-import { advanceTask, createTask, planTask, unblockTask, ROUTES, KIND_LABELS } from '../core/workflow.js';
-import { approveArtifact, declineArtifact, deferArtifactDecision, editArtifact, rejectArtifact, rescheduleArtifact } from '../core/approval.js';
-import { campaignSummary, createCampaign } from '../core/campaigns.js';
-import { createPublishJob, retryPublish, runJob, recountApprovalShare } from '../core/publishing.js';
-import { MOCK_MODES } from '../core/connectors.js';
-import { teamCoverage, wizardTemplate } from '../core/project-factory.js';
-import { recordSeoAudit, saveSeoProfile, ctaFromProfile } from '../core/seo.js';
+import { advanceTask, createTask, planTask, unblockTask, ROUTES, KIND_LABELS } from '../core/workflow.js?v=mtlq3kut';
+import { approveArtifact, declineArtifact, deferArtifactDecision, editArtifact, rejectArtifact, rescheduleArtifact } from '../core/approval.js?v=mtlq3kut';
+import { campaignSummary, createCampaign } from '../core/campaigns.js?v=mtlq3kut';
+import { createPublishJob, retryPublish, runJob, recountApprovalShare } from '../core/publishing.js?v=mtlq3kut';
+import { MOCK_MODES } from '../core/connectors.js?v=mtlq3kut';
+import { teamCoverage, wizardTemplate } from '../core/project-factory.js?v=mtlq3kut';
+import { recordSeoAudit, saveSeoProfile, ctaFromProfile } from '../core/seo.js?v=mtlq3kut';
 
                                                                      
                                                             

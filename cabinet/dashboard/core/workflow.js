@@ -3,13 +3,13 @@
                                                                                                      
                                                
                     
-import { DomainError } from './types.js';
-import { computeContentHash, sha256 } from './hash.js';
-import { nextId, taskId as makeTaskId } from './ids.js';
-import { pushEvent } from './events.js';
-import { buildQualityReport } from './quality.js';
-import { getTask } from './approval.js';
-import { ctaFromProfile, seoProfileBrief } from './seo.js';
+import { DomainError } from './types.js?v=mtlq3kut';
+import { computeContentHash, sha256 } from './hash.js?v=mtlq3kut';
+import { nextId, taskId as makeTaskId } from './ids.js?v=mtlq3kut';
+import { pushEvent } from './events.js?v=mtlq3kut';
+import { buildQualityReport } from './quality.js?v=mtlq3kut';
+import { getTask } from './approval.js?v=mtlq3kut';
+import { ctaFromProfile, seoProfileBrief } from './seo.js?v=mtlq3kut';
 
 export const ROUTES                             = {
   post: ['market-researcher', 'chief-editor', 'creative-director', 'channel-editor', 'quality-controller'],

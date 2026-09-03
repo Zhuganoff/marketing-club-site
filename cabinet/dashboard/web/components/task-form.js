@@ -1,8 +1,8 @@
 // Форма создания задачи (идея / пост / Reels / SEO / отчёт) с кампанией и желаемой датой. Открывается модально.
                                      
-import { api } from '../api.js';
-import { h, modal, KIND_LABEL, todayKey } from '../ui.js';
-import { IDEA_CATALOG } from '../idea-catalog.js';
+import { api } from '../api.js?v=mtlq3kut';
+import { h, modal, KIND_LABEL, todayKey } from '../ui.js?v=mtlq3kut';
+import { IDEA_CATALOG } from '../idea-catalog.js?v=mtlq3kut';
 
 export function taskForm(app     , preset                                                                                                                      = {})              {
   const title = h('input', { placeholder: 'Название — выберите из списка или впишите своё', required: true, value: preset.presetTitle ?? '' })                    ;

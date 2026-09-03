@@ -1,11 +1,11 @@
 // Экран «Проекты» (направление Teamly «Your teams», указание владельца 2026-09-03):
 // карточки проектов с командой и меню «Архив/Удалить», вкладка «Архив» с возвратом.
                                      
-import { api } from '../api.js';
-import { h, modal, fmtDate } from '../ui.js';
-import { AGENT_NAME } from '../components/team-studio.js';
-import { openProjectWizard } from '../components/project-wizard.js';
-import { pendingDecisions } from '../app.js';
+import { api } from '../api.js?v=mtlq3kut';
+import { h, modal, fmtDate } from '../ui.js?v=mtlq3kut';
+import { AGENT_NAME } from '../components/team-studio.js?v=mtlq3kut';
+import { openProjectWizard } from '../components/project-wizard.js?v=mtlq3kut';
+import { pendingDecisions } from '../app.js?v=mtlq3kut';
 
 function openProject(app     , pid        ) {
   if (app.pid !== pid) {
