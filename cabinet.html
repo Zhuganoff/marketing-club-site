@@ -33,11 +33,18 @@ a.ghost { display:inline-block; margin-top:16px; color:#3E434B; font-size:13px; 
     <p>Переводим вас в панель управления проектами…</p>
     <a class="btn" href="http://127.0.0.1:4310/#/projects">Открыть кабинет →</a>
   </div>
+  <div id="direct" hidden>
+    <h1>Вход в личный кабинет</h1>
+    <p>Кабинет Marketing Club работает на вашем компьютере — все данные остаются у вас, наружу ничего не отправляется.</p>
+    <p><a class="btn" href="http://127.0.0.1:4310/#/projects">Войти в кабинет →</a></p>
+    <p>Если браузер напишет «сайт недоступен» — панель не запущена: откройте терминал в папке проекта, выполните <code>npm run dev</code> и нажмите кнопку ещё раз.</p>
+  </div>
   <div id="offline" hidden>
-    <h1>Кабинет не ответил на проверку</h1>
-    <p>Такое бывает по двум причинам: панель не запущена, или браузер не даёт публичной странице опрашивать локальный адрес. Попробуйте открыть напрямую:</p>
+    <h1>Кабинет сейчас не запущен</h1>
+    <p>Откройте терминал в папке проекта и выполните:</p>
+    <p><code>npm run dev</code></p>
+    <p>Затем проверьте снова — или попробуйте открыть напрямую:</p>
     <p><a class="btn" href="http://127.0.0.1:4310/#/projects">Открыть кабинет напрямую →</a></p>
-    <p>Если не открылось — панель не запущена: в терминале в папке проекта выполните <code>npm run dev</code> и вернитесь сюда.</p>
     <button class="btn" id="retry" style="background:#3E434B">Проверить ещё раз</button>
   </div>
   <a class="ghost" href="index.html">← Вернуться на лендинг</a>
@@ -45,9 +52,17 @@ a.ghost { display:inline-block; margin-top:16px; color:#3E434B; font-size:13px; 
 <script>
 (function () {
   var dot = document.getElementById('dot'), stateText = document.getElementById('stateText');
-  var checking = document.getElementById('checking'), ready = document.getElementById('ready'), offline = document.getElementById('offline');
+  var checking = document.getElementById('checking'), ready = document.getElementById('ready'), offline = document.getElementById('offline'), direct = document.getElementById('direct');
   var CABINET = 'http://127.0.0.1:4310/';
-  function show(el) { checking.hidden = ready.hidden = offline.hidden = true; el.hidden = false; }
+  function show(el) { checking.hidden = ready.hidden = offline.hidden = direct.hidden = true; el.hidden = false; }
+  // С публичной https-страницы браузер не даёт опрашивать локальные адреса
+  // (Local Network Access) — но прямой переход по ссылке работает всегда.
+  // Поэтому на публичном сайте сразу показываем кнопку входа без проверки.
+  if (location.protocol === 'https:') {
+    dot.className = 'dot ok'; stateText.textContent = 'Кабинет — на вашем компьютере';
+    show(direct);
+    return;
+  }
   function probe(auto) {
     show(checking); dot.className = 'dot'; stateText.textContent = 'Проверяем кабинет…';
     var ctrl = new AbortController();
