@@ -57,6 +57,8 @@ function build(app     , tpl     , holder             , m                       
     frequencyPerWeek: tpl.defaults.frequencyPerWeek, preferredHours: [...tpl.defaults.preferredHours],
   };
   let current = 0;
+  let analyzing = false;
+  let pendingNext = false;
   const error = h('div', { class: 'callout err', hidden: true });
   const showError = (msg               ) => { error.hidden = !msg; error.textContent = msg ?? ''; };
 
@@ -88,9 +90,11 @@ function build(app     , tpl     , holder             , m                       
       };
       // Настоящий анализ сайта (разрешение владельца 2026-09-03): сервер читает публичные
       // страницы и возвращает проверки; при недоступности сайта — честный локальный черновик.
+      // «Далее» во время анализа не открывает пустой шаг — ждёт результата и продолжает сам.
       const analyze = async () => {
         const raw = url.value.trim();
         (d       ).websiteUrl = raw; (d       ).ownerNote = own.value.trim();
+        analyzing = true;
         out.hidden = false; out.innerHTML = '';
         out.appendChild(h('div', { class: 'muted small' }, 'Анализируем сайт… (несколько секунд)'));
         try {
@@ -133,9 +137,21 @@ function build(app     , tpl     , holder             , m                       
           out.appendChild(h('div', { class: 'callout err' }, `Сайт проверить не удалось: ${e instanceof ApiError ? e.message : String(e)}.`));
           out.appendChild(h('div', { class: 'callout human' }, h('b', null, 'Заполнили черновиком: '),
             `направление «${preset.name}», команда из ${d.roles.length} ролей, площадки и тон — поправьте на следующих шагах.`));
+        } finally {
+          analyzing = false;
+          if (pendingNext && current === 0) { pendingNext = false; showError(null); steps[0].collect(); current = 1; draw(); }
+          pendingNext = false;
         }
       };
       steps[0].collect = () => { (d       ).websiteUrl = url.value.trim(); (d       ).ownerNote = own.value.trim(); if (own.value.trim() && !d.goals.includes(own.value.trim())) d.goals = [own.value.trim(), ...d.goals]; return null; };
+      const step0Next = () => {
+        const v = url.value.trim();
+        if (analyzing) { pendingNext = true; return 'Дочитываем сайт — через пару секунд продолжим сами…'; }
+        if (v && analyzedFor !== v && /.\../.test(v.replace(/^https?:\/\//i, ''))) { pendingNext = true; analyzedFor = v; void analyze(); return 'Читаем сайт — через пару секунд продолжим сами…'; }
+        return null;
+      };
+      const baseCollect = steps[0].collect;
+      steps[0].collect = () => { const wait = step0Next(); if (wait) return wait; return baseCollect(); };
       // Автозапуск (замечание владельца 03.09): вставили адрес — анализ начинается сам,
       // пользователь дополняет уже после того, как система разобралась и предложила стратегию.
       let analyzedFor = '';
