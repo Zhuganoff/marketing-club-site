@@ -151,21 +151,20 @@ export async function lookup(_host, _opts) { return [{ address: '203.0.113.1', f
 
 // ---- Чтение чужих сайтов для анализа (только браузерная сборка) ----
 // Браузер запрещает публичной странице читать большинство сайтов напрямую (CORS).
-// Поэтому: сначала честная прямая попытка, при отказе — публичный прокси-посредник
-// allorigins.win (передаётся только адрес сайта; читаются только открытые страницы).
+// Прямая попытка → наш помощник mc-site-audit.zhuganoff.workers.dev (воркер владельца,
+// читает только открытые страницы и отвечает только нашему сайту).
+const AUDIT_HELPER = 'https://mc-site-audit.zhuganoff.workers.dev/?url=';
 async function proxyFetch(url) {
-  const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url));
-  if (!r.ok) throw new Error('proxy ' + r.status);
+  const r = await fetch(AUDIT_HELPER + encodeURIComponent(url));
   const j = await r.json();
-  const status = j.status && j.status.http_code ? j.status.http_code : (j.contents != null ? 200 : 502);
-  const text = j.contents ?? '';
-  const bytes = new TextEncoder().encode(text);
+  if (j.error) throw new Error(j.message || j.error);
+  const bytes = new TextEncoder().encode(j.body ?? '');
   const reader = () => { let used = false; return {
     async read() { if (used) return { done: true, value: undefined }; used = true; return { done: false, value: bytes }; },
     cancel() { return Promise.resolve(); },
   }; };
   return {
-    status, statusText: '',
+    status: j.status ?? 502, statusText: j.statusText ?? '',
     headers: { get: () => null },
     body: { getReader: reader, cancel: () => Promise.resolve() },
   };
@@ -173,7 +172,6 @@ async function proxyFetch(url) {
 export async function __webFetch(url, opts) {
   try {
     const res = await fetch(url, opts);
-    // opaqueredirect/opaque (status 0) — браузер скрыл ответ; идём через посредника
     if (res.status === 0 || res.type === 'opaque' || res.type === 'opaqueredirect') return await proxyFetch(url);
     return res;
   } catch (e) {
