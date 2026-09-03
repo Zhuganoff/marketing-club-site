@@ -57,8 +57,18 @@ a.ghost { display:inline-block; margin-top:16px; color:#3E434B; font-size:13px; 
   function show(el) { checking.hidden = ready.hidden = offline.hidden = direct.hidden = true; el.hidden = false; }
   // С публичной https-страницы браузер не даёт опрашивать локальные адреса
   // (Local Network Access) — но прямой переход по ссылке работает всегда.
-  // Поэтому на публичном сайте сразу показываем кнопку входа без проверки.
+  // Поэтому на публичном сайте сразу переходим в кабинет; если человек вернулся
+  // назад (переход не удался — панель не запущена), показываем инструкцию.
   if (location.protocol === 'https:') {
+    var tried = null;
+    try { tried = sessionStorage.getItem('mc.cabinet.tried'); } catch (e) {}
+    if (!tried) {
+      try { sessionStorage.setItem('mc.cabinet.tried', '1'); } catch (e) {}
+      dot.className = 'dot ok'; stateText.textContent = 'Открываем кабинет…';
+      location.href = CABINET + '#/projects';
+      return;
+    }
+    try { sessionStorage.removeItem('mc.cabinet.tried'); } catch (e) {}
     dot.className = 'dot ok'; stateText.textContent = 'Кабинет — на вашем компьютере';
     show(direct);
     return;
