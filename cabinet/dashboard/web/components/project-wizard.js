@@ -95,8 +95,15 @@ function build(app     , tpl     , holder             , m                       
         const raw = url.value.trim();
         (d       ).websiteUrl = raw; (d       ).ownerNote = own.value.trim();
         analyzing = true;
+        next.disabled = true;
+        const nextLabel = next.textContent;
+        next.textContent = 'Анализируем…';
         out.hidden = false; out.innerHTML = '';
-        out.appendChild(h('div', { class: 'muted small' }, 'Анализируем сайт… (несколько секунд)'));
+        let host = raw.replace(/^https?:\/\//i, '').split(/[\/?#]/)[0];
+        try { if (host.startsWith('xn--')) host = new URL(/^https?:/i.test(raw) ? raw : 'https://' + raw).hostname; } catch {}
+        out.appendChild(h('div', { class: 'analyze-wait' },
+          h('div', { class: 'analyze-wait__bar' }, h('i')),
+          h('div', { class: 'analyze-wait__steps' }, `Читаем ${host}: страница → заголовки → ссылки → robots → карта сайта`)));
         try {
           const { audit } = await api.analyzeSite(raw);
           (d       ).audit = audit;
@@ -139,6 +146,8 @@ function build(app     , tpl     , holder             , m                       
             `направление «${preset.name}», команда из ${d.roles.length} ролей, площадки и тон — поправьте на следующих шагах.`));
         } finally {
           analyzing = false;
+          next.disabled = false;
+          next.textContent = nextLabel;
           if (pendingNext && current === 0) { pendingNext = false; showError(null); steps[0].collect(); current = 1; draw(); }
           pendingNext = false;
         }

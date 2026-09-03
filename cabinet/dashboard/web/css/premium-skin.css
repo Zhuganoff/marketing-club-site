@@ -301,3 +301,12 @@ pre.doc { border-radius: 0; border: 1px solid var(--line); }
 .check-line.pass .code { color: var(--ok); }
 .check-line.warn .code { color: var(--warn); }
 .check-line.fail .code { color: var(--err); }
+
+/* ===== Анимация анализа сайта в мастере (03.09) ===== */
+.analyze-wait { border: 1.5px solid var(--ink); background: var(--panel); padding: 14px 16px; }
+.analyze-wait__bar { position: relative; height: 7px; background: var(--panel-2); border: 1px solid var(--line-2); overflow: hidden; margin-bottom: 9px; }
+.analyze-wait__bar i { position: absolute; top: 0; bottom: 0; width: 34%; background: var(--human); animation: analyze-scan 1.1s ease-in-out infinite; }
+@keyframes analyze-scan { 0% { left: -34%; } 100% { left: 100%; } }
+.analyze-wait__steps { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.reduce-motion .analyze-wait__bar i, [data-reduce-motion] .analyze-wait__bar i { animation: none; width: 100%; left: 0; opacity: .5; }
+@media (prefers-reduced-motion: reduce) { .analyze-wait__bar i { animation: none; width: 100%; left: 0; opacity: .5; } }
