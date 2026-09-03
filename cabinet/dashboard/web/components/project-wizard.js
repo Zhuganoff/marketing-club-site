@@ -58,6 +58,7 @@ function build(app     , tpl     , holder             , m                       
   };
   let current = 0;
   let analyzing = false;
+  const expertCollects                          = [];
   let pendingNext = false;
   const error = h('div', { class: 'callout err', hidden: true });
   const showError = (msg               ) => { error.hidden = !msg; error.textContent = msg ?? ''; };
@@ -195,14 +196,16 @@ function build(app     , tpl     , holder             , m                       
         h('label', null, 'Дополните от себя (после анализа)', own));
     }, collect: () => null },
 
-    { title: 'Основное', render: () => {
-      // Замечание владельца 03.09: техполей нет — идентификатор и часовой пояс создаются сами,
-      // название и география подставляются из анализа сайта, пользователь только правит.
+    // Шаг 2 из 3 (решение владельца 03.09 «как в айфоне»): всё уже заполнено анализом,
+    // человек только проверяет. Тонкие настройки — свёрнуты на последнем шаге.
+    { title: 'Проверьте — мы всё заполнили', render: () => {
       const name = h('input', { value: d.name, placeholder: 'Название проекта или бренда', required: true })                    ;
       const language = h('select', null, h('option', { value: 'ru', selected: d.language === 'ru' }, 'ru — русский'), h('option', { value: 'en', selected: d.language === 'en' }, 'en — English'))                     ;
       const geography = h('input', { value: d.geography, placeholder: 'город или регион — подставим из сайта, можно поправить' })                    ;
+      const audience = h('textarea', { rows: 3, placeholder: 'кто ваши клиенты — подставим из анализа, можно уточнить' }, d.audience)                       ;
+      if (!d.goals.length) d.goals = ['Привлечение аудитории и заявок'];
       steps[1].collect = () => {
-        d.name = name.value.trim(); d.language = language.value               ; d.geography = geography.value.trim();
+        d.name = name.value.trim(); d.language = language.value               ; d.geography = geography.value.trim(); d.audience = audience.value.trim();
         if (!d.name) return 'Укажите название проекта';
         let id = slugify(d.name) || 'project';
         if (id.length < 2) id = 'project';
@@ -216,14 +219,19 @@ function build(app     , tpl     , holder             , m                       
         h('label', null, d.name ? 'Название (взяли из сайта — можно поправить)' : 'Название', name),
         h('div', { class: 'grid two' },
           h('label', null, 'Язык публикаций', language),
-          h('label', null, d.geography ? 'География (нашли на сайте)' : 'География', geography)));
+          h('label', null, d.geography ? 'География (нашли на сайте)' : 'География', geography)),
+        h('label', null, 'Кто ваши клиенты', audience),
+        h('div', { class: 'muted small' }, d.channels.length
+          ? `Площадки: ${d.channels.map((c) => PLATFORM_LABEL[c.platform] ?? c.platform).join(', ')} — поменять можно на следующем шаге или после создания в «Настройках».`
+          : 'Площадки подберём по географии — поменять можно после создания в «Настройках».'));
     }, collect: () => null },
 
-    { title: 'Цель, аудитория, каналы', render: () => {
-      // «Цели проекта» убраны (замечание владельца 03.09): цель всегда одна — привлечение
-      // аудитории и заявок; пожелания владельца из шага 1 добавляются к ней автоматически.
-      if (!d.goals.length) d.goals = ['Привлечение аудитории и заявок'];
-      const audience = h('textarea', { rows: 3, placeholder: 'кто читает и что ему важно (пусто — TODO)' }, d.audience)                       ;
+    { title: 'Создание', render: () => {
+      // Человеческая сводка + свёртка «Для специалистов» (бывшие шаги 3–6: каналы, голос
+      // бренда, состав команды, лимит, правила публикаций). Их проверки выполняются при создании.
+      expertCollects.length = 0;
+
+      // --- Каналы ---
       const rows                                                                                                           = [];
       const list = h('div', { class: 'stack wizard-channels' });
       const connectorsFor = (platform        ) => (tpl.platforms.find((p     ) => p.platform === platform)?.connectors ?? [])            ;
@@ -233,35 +241,30 @@ function build(app     , tpl     , holder             , m                       
         const fill = (pl        , sel        ) => { connector.innerHTML = ''; const def = tpl.platforms.find((p     ) => p.platform === pl)?.connectorId; for (const c of connectorsFor(pl)) connector.appendChild(h('option', { value: c, selected: c === (sel || def) }, `${c} (mock)`)); };
         fill(init.platform, init.connectorId);
         platform.addEventListener('change', () => fill(platform.value, ''));
-        const name = h('input', { value: init.name, placeholder: 'рабочее название канала, без ссылок и логинов' })                    ;
-        const row = { platform, name, connector, el: h('div', { class: 'wizard-channel' }, platform, name, connector, h('button', { type: 'button', class: 'btn ghost sm', 'aria-label': 'убрать канал', onClick: () => { rows.splice(rows.indexOf(row), 1); row.el.remove(); } }, '×')) };
+        const nameI = h('input', { value: init.name, placeholder: 'рабочее название канала, без ссылок и логинов' })                    ;
+        const row = { platform, name: nameI, connector, el: h('div', { class: 'wizard-channel' }, platform, nameI, connector, h('button', { type: 'button', class: 'btn ghost sm', 'aria-label': 'убрать канал', onClick: () => { rows.splice(rows.indexOf(row), 1); row.el.remove(); } }, '×')) };
         rows.push(row); list.appendChild(row.el);
       };
       for (const c of d.channels) addRow(c);
-      steps[2].collect = () => {
-        d.audience = audience.value.trim();
+      expertCollects.push(() => {
         d.channels = rows.map((r) => ({ platform: r.platform.value, name: r.name.value.trim(), connectorId: r.connector.value }));
         for (const c of d.channels) { if (!c.name) return 'У каждого канала должно быть название'; if (/(https?:\/\/|www\.|t\.me\/|@[a-z0-9_]{3,})/i.test(c.name)) return `Канал «${c.name}»: ссылки и имена учётных записей не вводятся`; }
         return null;
-      };
-      return h('div', { class: 'form' },
-        h('label', null, 'Аудитория', audience),
-        h('div', null, h('div', { class: 'row', style: { justifyContent: 'space-between' } }, h('span', { class: 'muted small' }, 'Каналы (mock-описания; подключение аккаунтов — отдельным решением)'), h('button', { type: 'button', class: 'btn sm', onClick: () => addRow({ platform: tpl.platforms[0].platform, name: '', connectorId: tpl.platforms[0].connectorId }) }, '＋ Канал')), list));
-    }, collect: () => null },
+      });
+      const channelsSec = h('div', { class: 'form' },
+        h('div', { class: 'row', style: { justifyContent: 'space-between' } }, h('span', { class: 'muted small' }, 'Площадки проекта (аккаунты подключаются отдельным решением)'), h('button', { type: 'button', class: 'btn sm', onClick: () => addRow({ platform: tpl.platforms[0].platform, name: '', connectorId: tpl.platforms[0].connectorId }) }, '＋ Площадка')), list);
 
-    { title: 'Голос бренда и доказательства', render: () => {
-      const tone = h('textarea', { rows: 3, placeholder: 'как проект говорит с аудиторией (пусто — TODO)' }, d.tone)                       ;
+      // --- Голос бренда ---
+      const tone = h('textarea', { rows: 2, placeholder: 'как проект говорит с аудиторией' }, d.tone)                       ;
       const phrases = chipEditor(d.forbiddenPhrases, 'запрещённая формулировка и Enter');
       const rules = chipEditor(d.evidenceRules, 'правило и Enter — например: каждый факт со ссылкой на утверждённый источник');
-      steps[2].collect = () => { d.tone = tone.value.trim(); d.forbiddenPhrases = phrases.values(); d.evidenceRules = rules.values(); return null; };
-      return h('div', { class: 'form' },
+      expertCollects.push(() => { d.tone = tone.value.trim(); d.forbiddenPhrases = phrases.values(); d.evidenceRules = rules.values(); return null; });
+      const brandSec = h('div', { class: 'form' },
         h('label', null, 'Тон общения', tone),
         h('label', null, 'Запрещённые формулировки (контролёр вернёт материал)', phrases.el),
-        h('label', null, 'Правила доказательств (какие факты и источники допустимы)', rules.el),
-        h('div', { class: 'muted small' }, 'Проверяемые факты и визуальная система заполняются позже в brand.md — только утверждённые публичные сведения.'));
-    }, collect: () => null },
+        h('label', null, 'Правила доказательств', rules.el));
 
-    { title: 'Состав команды, лимит, согласующие', render: () => {
+      // --- Состав команды, лимит, согласующие ---
       const boxes                                          = [];
       const selected = () => boxes.filter((b) => b.box.checked || tpl.lockedRoles.includes(b.id)).map((b) => b.id);
       const presetLabel = h('span', { class: 'muted small' });
@@ -291,55 +294,52 @@ function build(app     , tpl     , holder             , m                       
       }));
       const limit = h('input', { type: 'number', min: 0, max: 100000, step: 1, value: String(d.weeklyLimitUsd), style: { width: '140px' } })                    ;
       const approvers = chipEditor(d.approvers, 'имя или роль согласующего и Enter');
-      steps[3].collect = () => {
+      expertCollects.push(() => {
         d.roles = selected();
         if (!tpl.routes.some((r     ) => r.roles.every((id        ) => d.roles.includes(id)))) return 'С этим составом нельзя запустить ни один маршрут — добавьте роли или выберите набор';
         const v = Number(limit.value); if (!Number.isFinite(v) || v < 0 || v > 100000) return 'Лимит проекта — число от 0 до 100000'; d.weeklyLimitUsd = v;
         d.approvers = approvers.values(); if (!d.approvers.length) return 'Нужен хотя бы один согласующий человек';
         return null;
-      };
+      });
       refresh();
-      return h('div', { class: 'form' },
-        h('div', { class: 'muted small' }, 'Выберите стартовый набор или соберите команду по одной роли. Назначение, модели и недельные лимиты ролей — из каталога agents/<роль>/contract.json (API не подключены). Оркестратор и исполнитель публикации обязательны и всегда показаны в составе; сервер создаст ровно выбранный состав.'),
-        presetBar,
-        grid,
-        coverage,
+      const teamSec = h('div', { class: 'form' },
+        presetBar, grid, coverage,
         h('div', { class: 'grid two' },
-          h('label', null, 'Контрольный потолок проекта, $/нед (не разрешение на реальные расходы)', limit),
+          h('label', null, 'Контрольный потолок проекта, $/нед', limit),
           h('label', null, 'Согласующие (только люди; агенты не одобряют)', approvers.el)));
-    }, collect: () => null },
 
-    { title: 'Правила публикаций', render: () => {
+      // --- Правила публикаций ---
       const freq = h('input', { type: 'number', min: 0, max: 50, step: 1, value: String(d.frequencyPerWeek), style: { width: '140px' } })                    ;
       const hours = chipEditor(d.preferredHours, 'ЧЧ:ММ и Enter');
-      steps[4].collect = () => {
+      expertCollects.push(() => {
         const v = Number(freq.value); if (!Number.isInteger(v) || v < 0 || v > 50) return 'Частота — целое число от 0 до 50'; d.frequencyPerWeek = v;
         d.preferredHours = hours.values(); for (const hh of d.preferredHours) if (!HOUR_RULE.test(hh)) return `Время «${hh}» — нужен формат ЧЧ:ММ`;
         return null;
-      };
-      return h('div', { class: 'form' },
-        h('label', null, 'Публикаций в неделю (ориентир для планирования)', freq),
-        h('label', null, 'Предпочтительное время публикаций', hours.el),
-        h('div', { class: 'callout human' }, 'Автопубликация и автоповтор выключены и не настраиваются: каждый материал утверждает человек, каждая публикация — отдельное решение.'));
-    }, collect: () => null },
+      });
+      const publishSec = h('div', { class: 'form' },
+        h('label', null, 'Выходов в неделю', freq),
+        h('label', null, 'Удобное время публикаций', hours.el),
+        h('div', { class: 'muted small' }, 'Автопубликации нет: каждый материал утверждаете вы.'));
 
-    { title: 'Проверка и создание', render: () => {
-      const kv = (k        , v        ) => h('div', { class: 'wizard-kv' }, h('span', { class: 'k' }, k), h('span', { class: 'v' }, v || '—'));
+      // --- Человеческая сводка ---
       const roleNames = tpl.roles.filter((r     ) => d.roles.includes(r.id)).map((r     ) => r.name);
       const preset = tpl.presets.find((p     ) => sameRoles(p.roles, d.roles));
-      const cov = coverageNodes(tpl, d.roles);
+      const kv = (k        , v        ) => h('div', { class: 'wizard-kv' }, h('span', { class: 'k' }, k), h('span', { class: 'v' }, v || '—'));
+      const expert = (title        , el             ) => h('details', { style: { marginTop: '8px' } }, h('summary', { class: 'muted small' }, title), h('div', { style: { marginTop: '8px' } }, el));
       return h('div', { class: 'stack' },
         h('div', { class: 'wizard-summary' },
-          kv('Проект', `${d.name} · projects/${d.id}/`), kv('Язык · пояс · география', `${d.language} · ${d.timezone} · ${d.geography || 'TODO'}`),
-          kv('Цели', d.goals.join('; ') || 'TODO'), kv('Аудитория', d.audience || 'TODO'),
-          kv('Каналы (mock)', d.channels.length ? d.channels.map((c) => `${PLATFORM_LABEL[c.platform] ?? c.platform}: ${c.name} → ${c.connectorId}`).join('; ') : 'нет'),
-          kv('Тон', d.tone || 'TODO'), kv('Запреты', d.forbiddenPhrases.join('; ')), kv('Правила доказательств', d.evidenceRules.join('; ')),
-          kv(`Состав команды (${d.roles.length})`, `${preset ? `набор «${preset.name}»` : 'свой состав'}: ${roleNames.join(', ')} — создаётся ровно этот список`),
-          h('div', { class: 'wizard-kv' }, h('span', { class: 'k' }, 'Маршруты'), h('span', { class: 'v' }, ...cov)),
-          kv('Потолок', `${usd(d.weeklyLimitUsd)}/нед`), kv('Согласующие', d.approvers.join(', ')),
-          kv('Публикации', `${d.frequencyPerWeek}/нед · ${d.preferredHours.join(', ') || '—'} · автопубликация выключена`)),
-        h('div', { class: 'muted small' }, 'После создания откроются настройки проекта — всё можно будет поправить в любой момент.'));
-    }, collect: () => null },
+          kv('Проект', d.name),
+          kv('Язык и география', `${d.language === 'ru' ? 'русский' : 'английский'} · ${d.geography || 'вся аудитория'}`),
+          kv('Кто ваши клиенты', d.audience),
+          kv('Площадки', d.channels.map((c) => PLATFORM_LABEL[c.platform] ?? c.platform).join(', ') + ' + статьи на сайт'),
+          kv('Команда', `${preset ? `набор «${preset.name}»` : 'Свой состав'}: ${roleNames.join(', ')} — создаётся ровно этот список`),
+          kv('Ритм', `${d.frequencyPerWeek} выхода в неделю · без автопубликации — решаете вы`)),
+        h('div', { class: 'callout human' }, h('b', null, 'Всё готово. '), 'Нажмите «Создать проект» — команда соберётся и предложит первые материалы. Любую настройку можно поменять потом в «Настройках».'),
+        expert('Для специалистов: площадки', channelsSec),
+        expert('Для специалистов: голос бренда', brandSec),
+        expert('Для специалистов: состав команды и лимит', teamSec),
+        expert('Для специалистов: правила публикаций', publishSec));
+    }, collect: () => { for (const c of expertCollects) { const err = c(); if (err) return err; } return null; } },
   ];
 
   const stepsBar = h('ol', { class: 'wizard-steps' });

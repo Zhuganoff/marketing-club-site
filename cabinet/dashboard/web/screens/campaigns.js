@@ -14,37 +14,31 @@ function fmtPeriod(c     )         {
   return `${f(c.period.from)} — ${f(c.period.to)}`;
 }
 
+// Форма кампании упрощена (решение владельца 03.09 «как в айфоне»): только название
+// и период. Аудитория и география — из проекта, UTM — автоматически, площадки — все.
 function newCampaignForm(app     , close            )              {
   const st = app.state; const p = st.project;
-  const name = h('input', { placeholder: 'Название кампании', required: true })                    ;
-  const goal = h('input', { placeholder: 'Цель' })                    ;
-  const audience = h('input', { value: p.audience })                    ;
-  const geography = h('input', { value: p.geography })                    ;
+  const name = h('input', { placeholder: 'Например: Осенняя акция', required: true })                    ;
   const from = h('input', { type: 'date', value: todayKey() })                    ;
-  const to = h('input', { type: 'date', value: todayKey() })                    ;
-  const utmSource = h('input', { value: 'marketing-club' })                    ;
-  const utmMedium = h('input', { value: 'social' })                    ;
-  const channelBoxes = st.channels.map((c     ) => ({ c, box: h('input', { type: 'checkbox' })                     }));
+  const monthAhead = new Date(Date.now() + 30 * 86400000);
+  const to = h('input', { type: 'date', value: monthAhead.toISOString().slice(0, 10) })                    ;
   const submit = async () => {
     if (!name.value.trim()) { name.focus(); return; }
     let created      = null;
     const ok = await app.act(async () => {
       const out = await api.createCampaign(app.pid, {
-        name: name.value, goal: goal.value, audience: audience.value, geography: geography.value, from: from.value, to: to.value,
-        channelIds: channelBoxes.filter((x     ) => x.box.checked).map((x     ) => x.c.id), utmSource: utmSource.value, utmMedium: utmMedium.value,
+        name: name.value, goal: '', audience: p.audience, geography: p.geography, from: from.value, to: to.value,
+        channelIds: st.channels.map((c     ) => c.id), utmSource: 'marketing-club', utmMedium: 'social',
       }, app.actor());
       created = out.campaign; return out;
     }, 'Кампания создана');
     if (ok && created) { close(); app.go('campaigns', { campaign: created.id }); }
   };
   return h('div', { class: 'form' },
-    h('label', null, 'Название', name), h('label', null, 'Цель', goal),
-    h('div', { class: 'grid two' }, h('label', null, 'Аудитория', audience), h('label', null, 'География', geography)),
+    h('div', { class: 'muted small' }, 'Кампания — это отдельная акция или тема на период: например, «Осенняя распродажа» или «Запуск новой услуги». Все её материалы и переходы считаются вместе.'),
+    h('label', null, 'Название', name),
     h('div', { class: 'grid two' }, h('label', null, 'Начало', from), h('label', null, 'Окончание', to)),
-    h('div', null, h('div', { class: 'muted small', style: { marginBottom: '4px' } }, 'Каналы'),
-      st.channels.length ? h('div', { class: 'cmp-channels' }, ...channelBoxes.map(({ c, box }     ) => h('label', { class: 'check' }, box, `${c.name} (${PLATFORM_LABEL[c.platform] ?? c.platform})`))) : h('div', { class: 'muted small' }, 'в проекте нет каналов')),
-    h('div', { class: 'grid two' }, h('label', null, 'utm_source', utmSource), h('label', null, 'utm_medium', utmMedium)),
-    h('div', { class: 'muted small' }, 'utm_campaign формируется из названия автоматически.'),
+    h('div', { class: 'muted small' }, 'Площадки, аудитория и метки для подсчёта переходов подставятся из проекта автоматически.'),
     h('div', { class: 'actions' }, h('button', { class: 'btn primary', onClick: submit }, 'Создать кампанию'), h('button', { class: 'btn', onClick: close }, 'Отмена')));
 }
 

@@ -60,7 +60,7 @@ export const STATUS_LABEL                         = {
 };
 export const COLUMN_LABEL                         = { ideas: 'Идеи', planned: 'Запланировано', in_progress: 'В работе', quality_control: 'Контроль качества', in_review: 'На согласовании', approved: 'Одобрено', published: 'Опубликовано' };
 export const COLUMNS = Object.keys(COLUMN_LABEL);
-export const KIND_LABEL                         = { post: 'Пост', reels: 'Reels', seo_page: 'SEO-страница', weekly_report: 'Недельный отчёт' };
+export const KIND_LABEL                         = { post: 'Пост', reels: 'Короткое видео (Reels)', seo_page: 'Статья на сайт (SEO)', weekly_report: 'Отчёт за неделю' };
 export const ART_KIND                         = { task_plan: 'план', strategy_brief: 'стратегический бриф', research_brief: 'исследовательский бриф', seo_task: 'SEO-задание', draft: 'текст', creative_concept: 'визуальная концепция', reel_brief: 'раскадровка Reels', channel_versions: 'версии под каналы', quality_report: 'отчёт контролёра', weekly_report: 'недельный отчёт', publish_job: 'задание публикации' };
 export const KIND_COLOR                         = { post: 'var(--kind-post)', reels: 'var(--kind-reels)', seo_page: 'var(--kind-article)', weekly_report: 'var(--kind-report)', campaign: 'var(--kind-campaign)' };
 export const PLATFORM_LABEL                         = { vk: 'ВКонтакте', telegram: 'Telegram', instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', youtube: 'YouTube', dzen: 'Дзен', ok: 'Одноклассники', rutube: 'Rutube', site: 'Сайт' };

@@ -6,7 +6,7 @@ import { IDEA_CATALOG } from '../idea-catalog.js';
 
 export function taskForm(app     , preset                                                                                                                      = {})              {
   const title = h('input', { placeholder: 'Название — выберите из списка или впишите своё', required: true, value: preset.presetTitle ?? '' })                    ;
-  const kind = h('select', null, ...app.state.kinds.map((k     ) => h('option', { value: k.kind, selected: k.kind === (preset.kind ?? 'post') }, `${k.label} · ${k.route.length} шагов`)))                     ;
+  const kind = h('select', null, ...app.state.kinds.map((k     ) => h('option', { value: k.kind, selected: k.kind === (preset.kind ?? 'post') }, KIND_LABEL[k.kind] ?? k.label)))                     ;
   // Копилка идей (замечание владельца 03.09): список того, что делается в маркетинге.
   // «Цель» убрана — цель всегда одна: привлекать аудиторию и продавать.
   const ideas = h('select')                     ;
@@ -41,7 +41,7 @@ export function taskForm(app     , preset                                       
     h('label', null, 'Идея из копилки маркетинга', ideas),
     h('label', null, 'Название', title),
     h('div', { class: 'grid two' }, h('label', null, 'Кампания', campaign), h('label', null, 'Желаемая дата публикации', planned)),
-    h('label', { class: 'check' }, asIdea, 'оставить в «Идеях» — без маршрута'),
+    h('label', { class: 'check' }, asIdea, 'пока просто записать идею — команда не начнёт работу'),
     h('details', null, h('summary', { class: 'muted small' }, 'Демо-сценарии для контролёра качества'),
       h('label', { class: 'check' }, noSources, 'исследователь не найдёт источников'), h('label', { class: 'check' }, promise, 'редактор вставит категорическое обещание'), h('label', { class: 'check' }, pii, 'в тексте окажутся персональные данные')),
     h('div', { class: 'actions' }, h('button', { class: 'btn primary', onClick: () => submit(!asIdea.checked) }, asIdea.checked ? 'Добавить идею' : 'Создать и запустить'), h('button', { class: 'btn', onClick: () => submit(false) }, 'Только создать')));
