@@ -1,0 +1,303 @@
+/* Premium-скин «инженерный бланк» (2026-09-03, по живому указанию владельца).
+   Референс: lazyweb.com/growth-score — точный светлый брутализм дорогой студии:
+   бумажный фон с точечной сеткой, чернильные рамки, жёсткие offset-тени без размытия,
+   моноширинные CAPS-подписи, крупный жирный гротеск. Семантика сохранена:
+   ОРАНЖЕВАЯ тень/полоса = решение человека; чернила = работа команды; зелёный = готово.
+   Подключается последним и переопределяет базовые стили без правки старых файлов. */
+
+:root {
+  --bg: #F7F3EA;
+  --panel: #FFFFFF;
+  --panel-2: #F1EDE2;
+  --ink: #111418;
+  --ink-2: #3E434B;
+  --ink-3: #6E7076;
+  --line: #D9D3C4;
+  --line-2: #E8E4D8;
+  --agent: #111418;
+  --agent-soft: #ECE9DF;
+  --agent-ink: #111418;
+  --human: #E85D00;
+  --human-soft: #FFE8D2;
+  --human-ink: #8F3B00;
+  --ok: #12805C;
+  --ok-soft: #DFF2E7;
+  --err: #C03426;
+  --err-soft: #FBE5E1;
+  --warn: #8A6400;
+  --warn-soft: #F6ECC8;
+  --seq-1: #E8E4D8; --seq-2: #CFC9B8; --seq-3: #9B9482; --seq-4: #55504A; --seq-5: #111418;
+  --preview-accent: #FFB273;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --radius: 0px;
+  --shadow-ink: 4px 4px 0 0 rgba(17, 20, 24, 0.16);
+  --shadow-human: 4px 4px 0 0 var(--human);
+}
+
+/* бумага с точечной сеткой чертёжного бланка */
+body {
+  background:
+    radial-gradient(rgba(17, 20, 24, 0.10) 1px, transparent 1.3px) 0 0 / 22px 22px,
+    var(--bg);
+}
+
+/* типографика: жирный гротеск + моно-CAPS для служебного */
+h1 { font: 800 27px/1.15 var(--font-display); letter-spacing: -0.02em; }
+h2 { font: 800 18px/1.2 var(--font-display); letter-spacing: -0.01em; }
+h3 { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.11em; }
+.kv .k { font-family: var(--font-mono); letter-spacing: 0.1em; }
+.page-head .sub { font-size: 13px; }
+
+/* панели — белые бланки с чернильной рамкой, углы острые */
+.card { border: 1.5px solid var(--ink); border-radius: 0; box-shadow: none; }
+.empty { border: 1.5px dashed var(--ink-3); border-radius: 0; background: transparent; }
+.callout { border-radius: 0; border: 1px solid var(--line); }
+.callout.err { border-color: var(--err); }
+.callout.human { border-color: var(--human); }
+.callout.ok { border-color: var(--ok); }
+
+/* навигация: чистый бланк, активный пункт — оранжевая полоса решения */
+.nav {
+  background: var(--panel);
+  border-right: 1.5px solid var(--ink);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.nav .brand b { font: 800 15px/1.1 var(--font-display); letter-spacing: -0.01em; }
+.nav .brand .dot { border-radius: 0; background: linear-gradient(135deg, var(--ink) 0 68%, var(--human) 68%); }
+.nav .brand span { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; }
+.nav a { border-radius: 0; border-left: 3px solid transparent; }
+.nav a.active { background: transparent; border-left-color: var(--human); color: var(--ink); font-weight: 700; }
+.nav a .count { border-radius: 0; background: var(--ink); color: #fff; box-shadow: 2px 2px 0 0 var(--human); }
+.nav .footer { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.07em; }
+
+.topbar {
+  background: var(--panel);
+  border-bottom: 1.5px solid var(--ink);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.topbar select { border: 1.5px solid var(--ink); border-radius: 0; background: var(--panel); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+.health { border-radius: 0; font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border: 1px solid currentColor; background: transparent; }
+.meter { border-radius: 0; height: 8px; border: 1px solid var(--ink); background: var(--panel); width: 120px; }
+.meter i { border-radius: 0; background: var(--ink); }
+.meter.hot i { background: var(--human); }
+
+/* кнопки — печатные клавиши: моно-CAPS, чернильная рамка, жёсткая тень */
+.btn {
+  border: 1.5px solid var(--ink);
+  border-radius: 0;
+  background: var(--panel);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 9px 14px;
+  transition: transform 120ms ease, box-shadow 120ms ease, background var(--dur);
+}
+.btn:hover { background: var(--panel); border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 rgba(17, 20, 24, 0.22); }
+.btn:active { transform: translate(1px, 1px); box-shadow: none; }
+.btn.sm { padding: 6px 10px; font-size: 10px; }
+.btn.primary { background: var(--ink); border-color: var(--ink); color: #fff; box-shadow: var(--shadow-ink); }
+.btn.primary:hover { background: var(--ink); box-shadow: 5px 5px 0 0 rgba(17, 20, 24, 0.22); }
+.btn.human { background: var(--ink); border-color: var(--ink); color: #fff; box-shadow: var(--shadow-human); }
+.btn.human:hover { background: var(--ink); box-shadow: 5px 5px 0 0 var(--human); }
+.btn.ghost { border-color: transparent; background: transparent; box-shadow: none; }
+.btn.ghost:hover { box-shadow: none; transform: none; background: var(--panel-2); }
+.btn.danger { color: var(--err); border-color: var(--err); }
+.btn:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2.5px solid var(--human); }
+
+/* бейджи — технические теги бланка */
+.badge { border-radius: 2px; font-family: var(--font-mono); font-size: 10px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em; }
+.mock-tag { border-radius: 2px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+.avatar { border-radius: 4px; }
+.avatar.lg { border-radius: 5px; }
+
+/* блок решения человека — сигнатура: оранжевая печать-тень */
+.decision {
+  background: var(--panel);
+  border: 1.5px solid var(--ink);
+  border-left-width: 1.5px;
+  border-radius: 0;
+  box-shadow: 5px 5px 0 0 var(--human);
+}
+.decision .sub { color: var(--ink-2); }
+
+/* списки и события */
+.ev-time { letter-spacing: 0; }
+.side-list .item { border-radius: 0; }
+.side-list .item:hover, .side-list .item.selected { background: var(--panel-2); box-shadow: inset 3px 0 0 var(--ink); }
+
+/* канбан и маршруты */
+.col { border-radius: 0; border: 1px solid var(--line); }
+.col h4 { font-family: var(--font-mono); letter-spacing: 0.09em; }
+.tcard { border-radius: 0; border: 1px solid var(--ink); transition: transform 120ms ease, box-shadow 120ms ease; }
+.tcard:hover, .tcard.selected { border-color: var(--ink); box-shadow: 3px 3px 0 0 rgba(17, 20, 24, 0.2); transform: translate(-1px, -1px); }
+.tcard.blocked { border-color: var(--err); box-shadow: 3px 3px 0 0 var(--err); }
+.route .step { border-radius: 0; }
+.route .step.now { background: var(--ink); }
+.route .step.human { background: var(--human-soft); color: var(--human-ink); box-shadow: 1.5px 1.5px 0 0 var(--human); }
+
+/* формы, вкладки, таблицы */
+.form input, .form select, .form textarea { border: 1.5px solid var(--ink); border-radius: 0; background: var(--panel); }
+.form label { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); }
+.tabs { border-bottom: 1.5px solid var(--ink); }
+.tabs button { border-bottom-width: 3px; margin-bottom: -1.5px; }
+.tabs button.active { color: var(--ink); border-bottom-color: var(--human); font-weight: 700; }
+.table th { font-family: var(--font-mono); letter-spacing: 0.08em; border-bottom: 1.5px solid var(--ink); }
+pre.doc { border-radius: 0; border: 1px solid var(--line); }
+
+/* календарь и графики */
+.cal .day { border-radius: 0; background: var(--panel); border: 1px solid var(--line); }
+.cal .slot { border-radius: 0; }
+.cal .slot.rev { box-shadow: 1.5px 1.5px 0 0 var(--human); }
+.chart .bar { fill: var(--ink); }
+.chart .bar:hover { fill: var(--human); }
+.chart .line { stroke: var(--ink); }
+.chart .pt { stroke: var(--ink); }
+
+/* карта агентов */
+.map .node rect { rx: 0; stroke-width: 1.4; }
+.map .wire.lit { stroke: var(--ink); }
+.map .node.active rect { stroke: var(--ink); fill: var(--agent-soft); }
+
+/* всплывающие элементы */
+.tooltip { border-radius: 0; border: 1px solid #fff2; }
+.toast { border-radius: 0; background: var(--panel); color: var(--ink); border: 1.5px solid var(--ink); box-shadow: 4px 4px 0 0 rgba(17, 20, 24, 0.2); font-weight: 550; }
+.toast.err { background: var(--panel); color: var(--err); border-color: var(--err); box-shadow: 4px 4px 0 0 var(--err); }
+.toast.ok { background: var(--panel); color: var(--ok); border-color: var(--ok); box-shadow: 4px 4px 0 0 var(--ok); }
+.toast.human { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: 4px 4px 0 0 var(--human); }
+
+/* студия команды: скруглённые пилюли приводим к бланку (анимации не трогаем) */
+.team-studio__station, .team-studio__tier, .team-studio__note, .team-studio__approver-tray { border-radius: 0 !important; }
+.team-studio__station { border-width: 1.5px; }
+
+/* ---- кабинет владельца (today-approvals) ---- */
+.owner-question { border: 1.5px solid var(--ink); border-radius: 0; }
+.owner-question-main { border-color: var(--ink); box-shadow: 6px 6px 0 0 var(--human); }
+.owner-question h2 { font: 800 19px/1.2 var(--font-display); letter-spacing: -0.01em; }
+.question-number { border-radius: 0; font-family: var(--font-mono); background: var(--ink); color: #fff; }
+.owner-question-main .question-number { background: var(--human); color: #fff; }
+.owner-create-menu, .topbar-details-body, .nav-secondary-list { border: 1.5px solid var(--ink); border-radius: 0; box-shadow: 6px 6px 0 0 rgba(17, 20, 24, 0.16); }
+.nav-secondary summary { border-radius: 0; }
+.owner-clear { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+.topbar-details summary { border-radius: 0; }
+.day-label { font-size: 10px; letter-spacing: 0.05em; }
+.day-row.today .day-label { color: var(--human); }
+
+/* ---- крупные карточки решений ---- */
+.bigcard { border: 1.5px solid var(--ink); border-radius: 0; }
+.bigcard.deferred { border-style: dashed; }
+.decision-form select, .decision-form input { border: 1.5px solid var(--ink); border-radius: 0; }
+.decision-main-actions .later { background: var(--panel); border: 1.5px solid var(--ink); color: var(--ink); box-shadow: none; }
+.review-counter b { font-family: var(--font-mono); }
+
+/* ---- общие элементы UX-слоя ---- */
+.modal { border: 1.5px solid var(--ink); border-radius: 0; box-shadow: 10px 10px 0 0 rgba(17, 20, 24, 0.2); -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--panel); }
+.modal-back { background: rgba(17, 20, 24, 0.42); }
+.modal-head { border-bottom: 1.5px solid var(--ink); }
+.stat { border: 1px solid var(--ink); border-radius: 0; background: var(--panel); }
+.stat .n { font: 800 22px/1.1 var(--font-display); }
+.stat .l { font-family: var(--font-mono); letter-spacing: 0.08em; }
+.kind-chip { border-radius: 2px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+.kind-chip::before { border-radius: 0; width: 6px; height: 6px; }
+.seg { border: 1.5px solid var(--ink); border-radius: 0; }
+.seg button.active { background: var(--ink); color: #fff; font-weight: 600; }
+.filters select, .filters input, .chip-input { border: 1.5px solid var(--ink); border-radius: 0; }
+.chip-input .tag { border-radius: 2px; font-family: var(--font-mono); font-size: 10.5px; }
+.editor .pane { border-radius: 0; border: 1px solid var(--line); }
+.preview { border-radius: 0; border: 1.5px solid var(--ink); }
+.preview .who i { border-radius: 4px; }
+.excerpt { border-radius: 0; border: 1px solid var(--line-2); }
+.media-ph { border-radius: 0; border: 1.5px dashed var(--ink-3); }
+.tl { border-left: 2px solid var(--ink); }
+.list > .item.running { border-radius: 0; box-shadow: inset 3px 0 0 var(--ink); }
+
+/* ---- направление Teamly (2026-09-03): координатор, сотрудники, лента офиса ---- */
+.nav-caps { font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); padding: 14px 10px 6px; }
+.crew-list { display: flex; flex-direction: column; gap: 2px; max-height: 34vh; overflow: auto; }
+.crew-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px !important; border-left: 3px solid transparent; text-decoration: none; }
+.crew-item:hover { background: var(--panel-2); }
+.crew-item--coord { border: 1.5px solid var(--ink); padding: 7px 8px !important; margin: 0 2px; }
+.crew-ava { width: 26px; height: 26px; flex: none; display: inline-flex; align-items: center; justify-content: center; font: 700 9px var(--font-mono); color: #fff; letter-spacing: 0.03em; border-radius: 4px; }
+.crew-body { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; flex: 1; }
+.crew-body b { font-size: 12px; font-weight: 700; }
+.crew-body span { font-size: 9.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.05em; font-family: var(--font-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.crew-online { font-family: var(--font-mono); font-size: 8.5px; font-weight: 700; letter-spacing: 0.08em; color: var(--ok); border: 1px solid var(--ok); padding: 2px 6px; flex: none; }
+.crew-online.err { color: var(--err); border-color: var(--err); }
+
+.office-layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 16px; }
+.office-feed { display: flex; flex-direction: column; max-height: calc(100vh - 140px); position: sticky; top: 0; }
+.office-feed-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1.5px solid var(--ink); }
+.office-feed-body { flex: 1; overflow: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
+.office-msg { display: flex; gap: 9px; align-items: flex-start; }
+.office-msg-body { min-width: 0; flex: 1; }
+.office-msg-who { font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); display: flex; justify-content: space-between; gap: 8px; }
+.office-msg-time { color: var(--ink-3); font-weight: 500; flex: none; }
+.office-msg-text { font-size: 12.5px; line-height: 1.45; margin-top: 3px; background: var(--panel-2); border: 1px solid var(--line); padding: 7px 10px; }
+.office-msg.human .office-msg-text { background: var(--human-soft); border-color: var(--human); }
+.office-msg.err .office-msg-text { background: var(--err-soft); border-color: var(--err); }
+.office-compose { border-top: 1.5px solid var(--ink); padding: 10px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.office-input { border: 1.5px solid var(--ink); border-radius: 0; padding: 9px 10px; font: 13px var(--font-body); background: var(--panel); min-width: 0; }
+.office-compose-hint { grid-column: 1 / -1; font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
+
+/* карточка сотрудника в сцене: имя крупно, профессия mono-caps */
+.team-studio__station-name { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; }
+.team-studio__station-job { display: block; font-family: var(--font-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin-top: 1px; }
+.team-studio__station-purpose { font-size: 11px; }
+.team-studio__note-skills { font-size: 12px; margin: 6px 0 0; }
+.team-studio__note-skills .skill-tag { font: 600 10px var(--font-mono); background: var(--panel-2); border: 1px solid var(--line); padding: 2px 6px; margin: 0 4px 4px 0; display: inline-block; }
+.team-studio__note-forbidden { color: var(--ink-3); }
+
+@media (max-width: 1100px) {
+  .office-layout { grid-template-columns: 1fr; }
+  .office-feed { position: static; max-height: 320px; }
+  .crew-list { max-height: none; }
+}
+
+/* ---- проекты в левом меню (указание владельца 2026-09-03) ---- */
+.nav-caps--projects { display: flex; align-items: center; justify-content: space-between; padding-right: 6px; }
+.proj-add { width: 22px; height: 22px; border: 1.5px solid var(--ink); background: var(--panel); font: 700 13px/1 var(--font-mono); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.proj-add:hover { background: var(--ink); color: #fff; }
+.proj-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 4px; max-height: 26vh; overflow: auto; }
+.proj-row { position: relative; display: flex; align-items: center; gap: 6px; padding: 7px 6px 7px 10px; border-left: 3px solid transparent; cursor: pointer; color: var(--ink-2); }
+.proj-row:hover { background: var(--panel-2); color: var(--ink); }
+.proj-row.active { border-left-color: var(--human); color: var(--ink); font-weight: 700; }
+.proj-row:focus-visible { outline: 2.5px solid var(--human); outline-offset: -2px; }
+.proj-name { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.proj-more { width: 24px; height: 24px; flex: none; border: 0; background: none; cursor: pointer; color: var(--ink-3); font-size: 15px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+.proj-more:hover { color: var(--ink); background: var(--line-2); }
+.proj-menu { position: absolute; z-index: 30; top: calc(100% - 2px); right: 4px; display: flex; gap: 6px; padding: 8px; background: var(--panel); border: 1.5px solid var(--ink); box-shadow: 5px 5px 0 0 rgba(17, 20, 24, 0.18); }
+.project-title { font: 700 13px/1.2 var(--font-body); letter-spacing: -0.01em; }
+
+/* ---- экран «Проекты» — карточки команд как у Teamly ---- */
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.proj-card { position: relative; background: var(--panel); border: 1.5px solid var(--ink); padding: 16px 16px 14px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 12px; min-height: 128px; transition: transform 120ms ease, box-shadow 120ms ease; }
+.proj-card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 0 rgba(17, 20, 24, 0.18); }
+.proj-card.current { box-shadow: 5px 5px 0 0 var(--human); }
+.proj-card.current:hover { box-shadow: 7px 7px 0 0 var(--human); }
+.proj-card:focus-visible { outline: 2.5px solid var(--human); outline-offset: 3px; }
+.proj-card--new { border-style: dashed; align-items: center; justify-content: center; text-align: center; gap: 6px; color: var(--ink-2); }
+.proj-card--new:hover { box-shadow: 5px 5px 0 0 rgba(17, 20, 24, 0.12); color: var(--ink); }
+.proj-card-plus { width: 34px; height: 34px; border: 1.5px solid var(--ink); display: inline-flex; align-items: center; justify-content: center; font: 700 16px var(--font-mono); }
+.proj-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.proj-card-name { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.25; }
+.proj-card-crew { display: flex; }
+.proj-card-crew .crew-ava { margin-left: -7px; box-shadow: 0 0 0 2px var(--panel); width: 28px; height: 28px; }
+.proj-card-crew .crew-ava:first-child { margin-left: 0; }
+.crew-ava--more { background: var(--panel-2) !important; color: var(--ink-2) !important; border: 1px solid var(--line-2); }
+.proj-card-meta { margin-top: auto; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.proj-card-pending { color: var(--human); font-weight: 700; }
+.proj-card-cur { margin-left: auto; color: var(--human); border: 1px solid var(--human); padding: 1px 6px; font-weight: 700; }
+.proj-card .proj-menu { top: 40px; right: 10px; }
+
+/* ===== Анализ сайта в мастере (реальные проверки, 03.09) ===== */
+.check-line { display: flex; gap: 10px; align-items: baseline; font-size: 12.5px; padding: 4px 0; border-bottom: 1px dashed var(--line-2); }
+.check-line:last-child { border-bottom: 0; }
+.check-line .code { font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; flex: 0 0 180px; }
+.check-line.pass .code { color: var(--ok); }
+.check-line.warn .code { color: var(--warn); }
+.check-line.fail .code { color: var(--err); }

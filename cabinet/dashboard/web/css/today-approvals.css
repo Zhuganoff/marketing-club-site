@@ -1,0 +1,114 @@
+/* Кабинет владельца. Цветовые токены задаются один раз в styles.css. */
+
+/* Пять основных разделов видны сразу; редко используемые не конкурируют с ними. */
+.nav-secondary { margin-top: 4px; }
+.nav-secondary summary { list-style: none; cursor: pointer; padding: 8px 10px; border-radius: 8px; color: var(--ink-2); }
+.nav-secondary summary::-webkit-details-marker { display: none; }
+.nav-secondary summary::after { content: "⌄"; float: right; color: var(--ink-3); }
+.nav-secondary[open] > summary, .nav-secondary.contains-active > summary { background: var(--panel-2); color: var(--ink); }
+.nav-secondary[open] summary::after { content: "⌃"; }
+.nav-secondary-list { display: grid; gap: 2px; padding: 3px 0 0 8px; }
+.nav-secondary summary:focus-visible, .topbar-details summary:focus-visible, .owner-more > summary:focus-visible, .approval-history > summary:focus-visible { outline: 2px solid var(--agent); outline-offset: 2px; }
+
+.owner-top { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.owner-clear { color: var(--ok); font-size: 12px; font-weight: 600; }
+.topbar-details { position: relative; }
+.topbar-details summary { cursor: pointer; color: var(--ink-2); font-size: 12px; padding: 6px 8px; border-radius: 8px; }
+.topbar-details summary:hover, .topbar-details[open] summary { background: var(--panel-2); color: var(--ink); }
+.topbar-details-body { position: absolute; z-index: 30; top: calc(100% + 10px); right: 0; width: 280px; padding: 14px; display: grid; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 40px rgba(23, 32, 45, 0.14); }
+.topbar-details-body .meter { width: 100%; margin-top: 5px; }
+
+/* Главная отвечает на три вопроса владельца. */
+.owner-home { max-width: 1240px; margin: 0 auto; }
+.owner-home .page-head { align-items: center; }
+.owner-create { position: relative; }
+.owner-create > summary { list-style: none; cursor: pointer; min-width: 118px; justify-content: center; }
+.owner-create > summary::-webkit-details-marker { display: none; }
+.owner-create-menu { position: absolute; z-index: 20; top: calc(100% + 8px); right: 0; width: 210px; display: grid; gap: 4px; padding: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 40px rgba(20, 33, 58, 0.14); }
+.owner-create-menu .btn { justify-content: flex-start; width: 100%; }
+.owner-question { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px; min-width: 0; }
+.owner-question-main { margin-bottom: 16px; border-color: color-mix(in srgb, var(--human) 35%, var(--line)); }
+.owner-question-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+.owner-question-head > div:first-child { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.owner-question h2 { font: 600 20px/1.2 var(--font-display); }
+.question-number { width: 28px; height: 28px; flex: none; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--agent-ink); background: var(--agent-soft); font-size: 12px; font-weight: 700; }
+.owner-question-main .question-number { color: var(--human-ink); background: var(--human-soft); }
+.owner-question-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.owner-more { margin-top: 16px; }
+.owner-more > summary, .approval-history > summary { cursor: pointer; color: var(--ink-2); padding: 10px 2px; font-weight: 600; }
+.owner-more-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding-top: 4px; }
+
+.decision.failed { border-color: var(--err); background: var(--err-soft); }
+.decision.failed .sub { color: var(--err); }
+.list > .item.running { background: var(--agent-soft); border-radius: 10px; padding-left: 10px; padding-right: 10px; }
+.list > .item .title { text-decoration: none; }
+.list > .item .title:hover { text-decoration: underline; }
+
+.days { display: grid; gap: 4px; }
+.day-row { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 8px; padding: 7px 0; border-top: 1px solid var(--line-2); font-size: 12px; }
+.day-row:first-child { border-top: 0; }
+.day-row.today .day-label { color: var(--agent-ink); font-weight: 700; }
+.day-label { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); padding-top: 2px; }
+.day-items { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.day-chip { display: flex; align-items: center; gap: 6px; cursor: pointer; min-width: 0; }
+.day-chip .kind-chip { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.day-chip:hover .kind-chip { filter: brightness(0.92); }
+
+/* Очередь решений: один материал, понятный счётчик и три равноправных пути. */
+.approvals { max-width: 1180px; margin: 0 auto; }
+.approvals .page-head .seg { align-self: flex-end; }
+.review-workspace { max-width: 980px; margin: 0 auto; }
+.review-progress { display: grid; grid-template-columns: minmax(130px, 1fr) auto minmax(130px, 1fr); align-items: center; gap: 12px; margin: 2px 0 14px; }
+.review-progress > button:last-child { justify-self: end; }
+.review-counter { display: grid; justify-items: center; gap: 2px; text-align: center; }
+.review-counter b { font-size: 14px; }
+.review-counter span { color: var(--ink-3); font-size: 12px; }
+.review-empty { display: grid; gap: 4px; }
+.review-empty b { color: var(--ok); font-size: 16px; }
+.approval-history { max-width: 980px; margin: 12px auto 0; }
+
+.bigcard { border-radius: 16px; }
+.bigcard.deferred { border-color: color-mix(in srgb, var(--human) 45%, var(--line)); }
+.bigcard .head h2 { font-size: 17px; }
+.bigcard.compact .compact-meta { margin-top: -4px; }
+.bigcard .card-actions { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-2); }
+.review-more { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 2px 0; }
+.decision-settings { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.decision-settings label { display: grid; gap: 5px; color: var(--ink-2); font-size: 12px; }
+.decision-form select, .decision-form input { width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); font-size: 13px; }
+.decision-main-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-top: 12px; }
+.decision-main-actions .btn { min-height: 42px; justify-content: center; }
+.decision-main-actions .later { border-color: color-mix(in srgb, var(--agent) 35%, var(--line)); color: var(--agent-ink); background: var(--agent-soft); }
+.decision-secondary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
+.decision-secondary .danger { margin-left: auto; }
+.risk-list { margin: 4px 0 0; padding-left: 16px; }
+.risk-list li { margin: 2px 0; }
+.warn-text { color: var(--warn); }
+
+@media (max-width: 1100px) {
+  .nav-secondary { position: relative; }
+  .nav-secondary-list { position: absolute; z-index: 25; min-width: 190px; padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 32px rgba(23, 32, 45, 0.14); }
+  .owner-question-grid, .owner-more-body { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .topbar { padding: 6px 12px; gap: 8px; }
+  .topbar .project > .muted, .owner-clear { display: none; }
+  .topbar .project { min-width: 0; }
+  .topbar .project select { min-width: 0; max-width: 150px; }
+  .owner-top { gap: 4px; }
+  .owner-top .btn { font-size: 11px; }
+  .topbar-details-body { right: -4px; width: min(280px, calc(100vw - 24px)); }
+  .owner-home .page-head, .approvals .page-head, .owner-question-head { align-items: stretch; flex-direction: column; }
+  .owner-create { align-self: flex-start; }
+  .owner-create-menu { left: 0; right: auto; }
+  .owner-question { padding: 16px; border-radius: 14px; }
+  .owner-question-head > .row { justify-content: space-between; }
+  .review-progress { grid-template-columns: 1fr 1fr; }
+  .review-counter { grid-column: 1 / -1; grid-row: 1; }
+  .review-progress > button:first-child { grid-column: 1; }
+  .review-progress > button:last-child { grid-column: 2; }
+  .decision-settings, .decision-main-actions { grid-template-columns: 1fr; }
+  .decision-secondary { align-items: flex-start; flex-direction: column; }
+  .decision-secondary .danger { margin-left: 0; }
+}

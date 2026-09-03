@@ -62,15 +62,8 @@ a.ghost { display:inline-block; margin-top:16px; color:#3E434B; font-size:13px; 
   if (location.protocol === 'https:') {
     var tried = null;
     try { tried = sessionStorage.getItem('mc.cabinet.tried'); } catch (e) {}
-    if (!tried) {
-      try { sessionStorage.setItem('mc.cabinet.tried', '1'); } catch (e) {}
-      dot.className = 'dot ok'; stateText.textContent = 'Открываем кабинет…';
-      location.href = CABINET + '#/projects';
-      return;
-    }
-    try { sessionStorage.removeItem('mc.cabinet.tried'); } catch (e) {}
-    dot.className = 'dot ok'; stateText.textContent = 'Кабинет — на вашем компьютере';
-    show(direct);
+    dot.className = 'dot ok'; stateText.textContent = 'Открываем кабинет…';
+    location.href = './cabinet/#/projects';
     return;
   }
   function probe(auto) {

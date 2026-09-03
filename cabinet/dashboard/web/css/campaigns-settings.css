@@ -1,0 +1,40 @@
+/* Кампании и настройки проекта. */
+.cmp-channels { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; }
+.utm-query { display: block; margin-top: 4px; padding: 8px 10px; background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 8px; font: 12px var(--font-mono); word-break: break-all; user-select: all; }
+.side-list .item .title { font-weight: 600; }
+.teams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.team-box { background: var(--panel-2); }
+.role-line { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 8px; align-items: start; }
+.role-line input { grid-row: 1 / span 2; margin-top: 3px; }
+.role-line .role-name { font-size: 13px; }
+.role-line .role-meta { grid-column: 2; }
+.role-line input:disabled + .role-name { color: var(--ink-3); }
+.badge.dirty { margin-left: 8px; }
+.settings-footer { display: flex; justify-content: flex-end; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line-2); }
+.tcard.archived { opacity: 0.55; }
+.card details summary { cursor: pointer; }
+/* Состав команды: стартовые наборы и доступность маршрутов. */
+.preset-bar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.preset-bar .muted { margin-left: 6px; }
+.coverage { margin-top: 10px; font-size: 13px; }
+
+/* Мастер создания проекта. */
+.wizard { display: grid; gap: 14px; }
+.wizard-steps { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0; }
+.wizard-steps li { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; color: var(--ink-3); background: var(--panel-2); }
+.wizard-steps li .n { width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--line); font-size: 11px; font-weight: 600; color: var(--ink-2); }
+.wizard-steps li.active { color: var(--agent-ink); border-color: var(--agent); background: var(--agent-soft); }
+.wizard-steps li.active .n { background: var(--agent); color: #fff; }
+.wizard-steps li.done { color: var(--ink-2); }
+.wizard-steps li.done .n { background: var(--ok-soft); color: var(--ok); }
+.wizard-body { min-height: 200px; }
+.wizard-channels { gap: 6px; }
+.wizard-channel { display: grid; grid-template-columns: 140px minmax(0, 1fr) 150px auto; gap: 6px; align-items: center; }
+.wizard-channel input, .wizard-channel select { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); min-width: 0; }
+.wizard-footer { display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line-2); }
+.wizard-footer .spacer { flex: 1; }
+.wizard-summary { display: grid; gap: 6px; }
+.wizard-kv { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 10px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--line-2); }
+.wizard-kv .k { color: var(--ink-3); }
+.wizard-kv .v { word-break: break-word; }
+@media (max-width: 1100px) { .teams-grid { grid-template-columns: 1fr; } .wizard-channel { grid-template-columns: 1fr; } .wizard-kv { grid-template-columns: 1fr; } }
