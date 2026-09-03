@@ -1,7 +1,7 @@
 // Крупная карточка материала: текст, медиа-заглушка, площадки, время, риски, комментарий контролёра, решения человека.
                                      
-import { api } from '../api.js?v=mtlslcfn';
-import { h, badge, statusBadge, kindChip, modal, fmtDate, short, todayKey, PLATFORM_LABEL, STATUS_LABEL, ART_KIND } from '../ui.js?v=mtlslcfn';
+import { api } from '../api.js?v=mtlth9b9';
+import { h, badge, statusBadge, kindChip, modal, fmtDate, short, todayKey, PLATFORM_LABEL, STATUS_LABEL, ART_KIND } from '../ui.js?v=mtlth9b9';
 
                                    
                     
@@ -79,6 +79,11 @@ export function materialCard(app     , a     , opts                      = {})  
       h('div', { class: 'muted small' }, campaign ? [h('span', null, `кампания «${campaign.name}»`), ' · '] : null, `подготовлено командой · обновлено ${fmtDate(a.updatedAt)}`)),
     h('button', { class: 'btn ghost sm', onClick: () => app.go('content', { artifact: a.id }) }, 'Открыть полностью'));
 
+  // Честная пометка (вопрос владельца 03.09 «что я здесь должен утвердить?»):
+  // модель-писатель не подключена, тексты — заготовки для проверки маршрута и решений.
+  const draftNote = a.kind === 'draft' || a.kind === 'channel_versions'
+    ? h('div', { class: 'callout', style: { marginBottom: '8px' } }, h('b', null, 'Это заготовка. '), 'Модель-писатель ещё не подключена: команда показывает, как пойдёт работа и что вы будете решать. Настоящие тексты появятся после подключения модели.')
+    : null;
   const excerpt = h('div', { class: 'excerpt' }, a.body, a.cta ? `\n\n${a.cta}` : '', a.hashtags?.length ? `\n${a.hashtags.join(' ')}` : '');
   const media = h('div', { class: 'media-ph' }, a.media?.length ? `${a.media[0].kind}: ${a.media[0].description}` : 'медиа не задано');
   const meta = h('div', { class: 'meta-list' },
@@ -108,5 +113,5 @@ export function materialCard(app     , a     , opts                      = {})  
         risks.length ? ` · рисков: ${risks.length}` : ''),
       actions);
   }
-  return h('div', { class: `bigcard${opts.deferred ? ' deferred' : ''}` }, head, h('div', { class: 'grid-3' }, excerpt, media, meta), actions);
+  return h('div', { class: `bigcard${opts.deferred ? ' deferred' : ''}` }, head, draftNote, h('div', { class: 'grid-3' }, excerpt, media, meta), actions);
 }

@@ -1,10 +1,10 @@
 // Исполнитель публикации и задания. См. docs/PUBLISHING_CONTRACT.md §4.
                                                                                                                    
-import { DomainError } from './types.js?v=mtlslcfn';
-import { computeContentHash } from './hash.js?v=mtlslcfn';
-import { nextId } from './ids.js?v=mtlslcfn';
-import { pushEvent } from './events.js?v=mtlslcfn';
-import { getArtifact } from './approval.js?v=mtlslcfn';
+import { DomainError } from './types.js?v=mtlth9b9';
+import { computeContentHash } from './hash.js?v=mtlth9b9';
+import { nextId } from './ids.js?v=mtlth9b9';
+import { pushEvent } from './events.js?v=mtlth9b9';
+import { getArtifact } from './approval.js?v=mtlth9b9';
 
 export const MAX_FAILED_ATTEMPTS = 3;
 const EXECUTOR        = { kind: 'agent', roleId: 'publisher-executor' };

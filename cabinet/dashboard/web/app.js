@@ -1,21 +1,21 @@
 // Оболочка панели: состояние, роутер, шапка, навигация, запуск демо, быстрые действия.
-import { api, ApiError } from './api.js?v=mtlslcfn';
-import { h, badge, toast, sleep, usd } from './ui.js?v=mtlslcfn';
-import { apply as applyMotion, reduceMotion, setReduceMotion } from './motion.js?v=mtlslcfn';
-import { openTaskModal } from './components/task-form.js?v=mtlslcfn';
-import { openProjectWizard } from './components/project-wizard.js?v=mtlslcfn';
-import { AGENT_NAME } from './components/team-studio.js?v=mtlslcfn';
-import { render as today } from './screens/today.js?v=mtlslcfn';
-import { render as projectsScreen } from './screens/projects.js?v=mtlslcfn';
-import { render as content } from './screens/content.js?v=mtlslcfn';
-import { render as calendar } from './screens/calendar.js?v=mtlslcfn';
-import { render as approvals } from './screens/approvals.js?v=mtlslcfn';
-import { render as campaigns } from './screens/campaigns.js?v=mtlslcfn';
-import { render as tasks } from './screens/tasks.js?v=mtlslcfn';
-import { render as agents } from './screens/agents.js?v=mtlslcfn';
-import { render as analytics } from './screens/analytics.js?v=mtlslcfn';
-import { render as settings } from './screens/settings.js?v=mtlslcfn';
-import { render as seo } from './screens/seo.js?v=mtlslcfn';
+import { api, ApiError } from './api.js?v=mtlth9b9';
+import { h, badge, toast, sleep, usd } from './ui.js?v=mtlth9b9';
+import { apply as applyMotion, reduceMotion, setReduceMotion } from './motion.js?v=mtlth9b9';
+import { openTaskModal } from './components/task-form.js?v=mtlth9b9';
+import { openProjectWizard } from './components/project-wizard.js?v=mtlth9b9';
+import { AGENT_NAME } from './components/team-studio.js?v=mtlth9b9';
+import { render as today } from './screens/today.js?v=mtlth9b9';
+import { render as projectsScreen } from './screens/projects.js?v=mtlth9b9';
+import { render as content } from './screens/content.js?v=mtlth9b9';
+import { render as calendar } from './screens/calendar.js?v=mtlth9b9';
+import { render as approvals } from './screens/approvals.js?v=mtlth9b9';
+import { render as campaigns } from './screens/campaigns.js?v=mtlth9b9';
+import { render as tasks } from './screens/tasks.js?v=mtlth9b9';
+import { render as agents } from './screens/agents.js?v=mtlth9b9';
+import { render as analytics } from './screens/analytics.js?v=mtlth9b9';
+import { render as settings } from './screens/settings.js?v=mtlth9b9';
+import { render as seo } from './screens/seo.js?v=mtlth9b9';
 
                    
               

@@ -3,13 +3,13 @@
                                                                                                      
                                                
                     
-import { DomainError } from './types.js?v=mtlslcfn';
-import { computeContentHash, sha256 } from './hash.js?v=mtlslcfn';
-import { nextId, taskId as makeTaskId } from './ids.js?v=mtlslcfn';
-import { pushEvent } from './events.js?v=mtlslcfn';
-import { buildQualityReport } from './quality.js?v=mtlslcfn';
-import { getTask } from './approval.js?v=mtlslcfn';
-import { ctaFromProfile, seoProfileBrief } from './seo.js?v=mtlslcfn';
+import { DomainError } from './types.js?v=mtlth9b9';
+import { computeContentHash, sha256 } from './hash.js?v=mtlth9b9';
+import { nextId, taskId as makeTaskId } from './ids.js?v=mtlth9b9';
+import { pushEvent } from './events.js?v=mtlth9b9';
+import { buildQualityReport } from './quality.js?v=mtlth9b9';
+import { getTask } from './approval.js?v=mtlth9b9';
+import { ctaFromProfile, seoProfileBrief } from './seo.js?v=mtlth9b9';
 
 export const ROUTES                             = {
   post: ['market-researcher', 'chief-editor', 'creative-director', 'channel-editor', 'quality-controller'],
@@ -241,6 +241,13 @@ function newArtifact(state              , now        , task      , kind         
   return a;
 }
 
+// Аудитория для текстов-заготовок: первый сегмент, без служебных пометок мастера
+// («Подобрали по тематике…», «уточните под себя») — они не должны попадать в материал.
+function shortAudience(audience        )         {
+  const first = audience.split(/[;.]/)[0] ?? '';
+  return first.replace(/Подобрали по тематике.*$/i, '').replace(/уточните.*$/i, '').trim().toLowerCase() || 'ваши клиенты';
+}
+
 function lastHandoffOf(task      , role        )                           {
   return [...task.handoffs].reverse().find((h) => h.from === role);
 }
@@ -267,7 +274,7 @@ function produce(state              , now        , catalog         , task      ,
       const facts         = noSources
         ? [{ text: t(state, `Аудитория интересуется темой «${topic}»`, `Audience is interested in “${topic}”`), verified: false, type: 'fact' }]
         : [
-          { text: t(state, `Тема «${topic}» входит в число частых вопросов аудитории (${p.audience})`, `“${topic}” is among frequent audience questions (${p.audience})`), source: 'https://example.invalid/industry-overview', verified: true, type: 'fact' },
+          { text: t(state, `Тема «${topic}» — из частых вопросов вашей аудитории: ${shortAudience(p.audience)}`, `“${topic}” is among frequent audience questions`), source: 'https://example.invalid/industry-overview', verified: true, type: 'fact' },
           { text: t(state, 'Конкуренты чаще обещают результат, чем объясняют процесс', 'Competitors promise outcomes more often than they explain the process'), verified: true, source: 'https://example.invalid/industry-overview', type: 'fact' },
           { text: t(state, 'Формат «разбор типичной ошибки» соберёт больше сохранений', 'A “typical mistake breakdown” format will get more saves'), verified: false, type: 'hypothesis' },
         ];

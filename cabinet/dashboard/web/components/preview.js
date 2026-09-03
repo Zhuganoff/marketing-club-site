@@ -1,6 +1,6 @@
 // Предпросмотр материала под площадки — mock-вид поста, ничего не публикует.
                                      
-import { h, badge, PLATFORMS, PLATFORM_LABEL, timeOf } from '../ui.js?v=mtlslcfn';
+import { h, badge, PLATFORMS, PLATFORM_LABEL, timeOf } from '../ui.js?v=mtlth9b9';
 
 function textFor(artifact     , platform        )         {
   const v = (artifact.channelVersions ?? []).find((x     ) => x.platform === platform);
