@@ -1,7 +1,7 @@
                                      
-import { api } from '../api.js?v=mtmjsdom';
-import { h, badge, statusBadge, kindChip, modal, fmtDate, short, ART_KIND, PLATFORMS, PLATFORM_LABEL, STATUS_LABEL } from '../ui.js?v=mtmjsdom';
-import { previewTabs } from '../components/preview.js?v=mtmjsdom';
+import { api } from '../api.js?v=mtmlkoru';
+import { h, badge, statusBadge, kindChip, modal, fmtDate, short, ART_KIND, PLATFORMS, PLATFORM_LABEL, STATUS_LABEL } from '../ui.js?v=mtmlkoru';
+import { previewTabs } from '../components/preview.js?v=mtmlkoru';
 
 const STATUSES = ['DRAFT', 'IN_REVIEW', 'APPROVED', 'PUBLISHED', 'FAILED'];
 const HISTORY_TYPES = /^(approval\.|artifact\.edited|artifact\.declined|artifact\.rescheduled)/;

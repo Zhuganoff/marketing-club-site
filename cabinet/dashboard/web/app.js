@@ -1,21 +1,21 @@
 // Оболочка панели: состояние, роутер, шапка, навигация, запуск демо, быстрые действия.
-import { api, ApiError } from './api.js?v=mtmjsdom';
-import { h, badge, toast, sleep, usd } from './ui.js?v=mtmjsdom';
-import { apply as applyMotion, reduceMotion, setReduceMotion } from './motion.js?v=mtmjsdom';
-import { openTaskModal } from './components/task-form.js?v=mtmjsdom';
-import { openProjectWizard } from './components/project-wizard.js?v=mtmjsdom';
-import { AGENT_NAME } from './components/team-studio.js?v=mtmjsdom';
-import { render as today } from './screens/today.js?v=mtmjsdom';
-import { render as projectsScreen } from './screens/projects.js?v=mtmjsdom';
-import { render as content } from './screens/content.js?v=mtmjsdom';
-import { render as calendar } from './screens/calendar.js?v=mtmjsdom';
-import { render as approvals } from './screens/approvals.js?v=mtmjsdom';
-import { render as campaigns } from './screens/campaigns.js?v=mtmjsdom';
-import { render as tasks } from './screens/tasks.js?v=mtmjsdom';
-import { render as agents } from './screens/agents.js?v=mtmjsdom';
-import { render as analytics } from './screens/analytics.js?v=mtmjsdom';
-import { render as settings } from './screens/settings.js?v=mtmjsdom';
-import { render as seo } from './screens/seo.js?v=mtmjsdom';
+import { api, ApiError } from './api.js?v=mtmlkoru';
+import { h, badge, toast, sleep, usd } from './ui.js?v=mtmlkoru';
+import { apply as applyMotion, reduceMotion, setReduceMotion } from './motion.js?v=mtmlkoru';
+import { openTaskModal } from './components/task-form.js?v=mtmlkoru';
+import { openProjectWizard } from './components/project-wizard.js?v=mtmlkoru';
+import { AGENT_NAME } from './components/team-studio.js?v=mtmlkoru';
+import { render as today } from './screens/today.js?v=mtmlkoru';
+import { render as projectsScreen } from './screens/projects.js?v=mtmlkoru';
+import { render as content } from './screens/content.js?v=mtmlkoru';
+import { render as calendar } from './screens/calendar.js?v=mtmlkoru';
+import { render as approvals } from './screens/approvals.js?v=mtmlkoru';
+import { render as campaigns } from './screens/campaigns.js?v=mtmlkoru';
+import { render as tasks } from './screens/tasks.js?v=mtmlkoru';
+import { render as agents } from './screens/agents.js?v=mtmlkoru';
+import { render as analytics } from './screens/analytics.js?v=mtmlkoru';
+import { render as settings } from './screens/settings.js?v=mtmlkoru';
+import { render as seo } from './screens/seo.js?v=mtmlkoru';
 
                    
               
@@ -70,7 +70,7 @@ const app      = {
   pid: '', state: null, catalog: [], projects: [], activeStep: null, running: false, sel: {},
   actor() { return app.state?.project?.approvers?.[0] ?? 'owner'; },
   setState(s) { app.state = s; app.render(); },
-  async refresh() { app.state = await api.state(app.pid); app.render(); },
+  async refresh() { if (!app.pid) { app.state = null; app.render(); return; } app.state = await api.state(app.pid); app.render(); },
   render() {
     const { screen, sel } = parseHash();
     app.sel = { ...app.sel, ...sel };
@@ -209,8 +209,11 @@ async function boot() {
   app.projects = await api.projects();
   let saved                = null;
   try { saved = localStorage.getItem('mc.pid'); } catch {}
-  app.pid = app.projects.some((p) => p.id === saved) ? saved  : app.projects[0].id;
+  // Пустая база (указание владельца 04.09: без виртуальных проектов) — кабинет открывается
+  // на экране «Проекты» с единственной картой «Создать новый проект».
+  app.pid = app.projects.some((p) => p.id === saved) ? saved  : (app.projects[0]?.id ?? '');
   window.addEventListener('hashchange', () => app.render());
+  if (!app.pid) { location.hash = '#/projects'; app.render(); app.catalog = await api.catalog(); return; }
   app.render();
   app.catalog = await api.catalog();
   await app.refresh();

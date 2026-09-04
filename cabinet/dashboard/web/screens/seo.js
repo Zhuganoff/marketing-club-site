@@ -2,8 +2,8 @@
 // по кнопке, история оценок, сравнение с прошлой проверкой, замечания → задачи SEO-стратегу.
 // Сеть — только на сервере (POST /api/projects/:id/seo-audit → dashboard/api/site-audit.ts).
                                      
-import { api } from '../api.js?v=mtmjsdom';
-import { h, fmtDate } from '../ui.js?v=mtmjsdom';
+import { api } from '../api.js?v=mtmlkoru';
+import { h, fmtDate } from '../ui.js?v=mtmlkoru';
 
 function checkLine(c                                                   , action                     )              {
   return h('div', { class: 'check-line ' + (c.status === 'ok' ? 'pass' : c.status === 'warn' ? 'warn' : 'fail') },

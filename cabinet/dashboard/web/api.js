@@ -3,7 +3,7 @@ export class ApiError extends Error { code        ; constructor(code        , me
 
 import { handleApi } from '../api/routes.js';
 import { Store } from '../core/store.js';
-const __store = new Store();
+const __store = new Store({ hideDemo: true });
 async function call(method, path, body) {
   const out = await handleApi(__store, { method, path, body: body ?? null });
   const data = out.body ?? {};

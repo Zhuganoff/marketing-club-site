@@ -1,18 +1,18 @@
 // Обработчики /api/*. Транспорт-независимы: получают метод, путь, тело; возвращают объект.
                                               
-import { ARCHIVE_TTL_DAYS, MODEL_LABELS } from '../core/store.js?v=mtmjsdom';
-import { analyzeSite } from './site-audit.js?v=mtmjsdom';
-import { DomainError } from '../core/types.js?v=mtmjsdom';
+import { ARCHIVE_TTL_DAYS, MODEL_LABELS } from '../core/store.js?v=mtmlkoru';
+import { analyzeSite } from './site-audit.js?v=mtmlkoru';
+import { DomainError } from '../core/types.js?v=mtmlkoru';
                                                                            
-import { advanceTask, createTask, planTask, unblockTask, ROUTES, KIND_LABELS } from '../core/workflow.js?v=mtmjsdom';
-import { approveArtifact, declineArtifact, deferArtifactDecision, editArtifact, rejectArtifact, rescheduleArtifact } from '../core/approval.js?v=mtmjsdom';
-import { campaignSummary, createCampaign } from '../core/campaigns.js?v=mtmjsdom';
-import { createPublishJob, retryPublish, runJob, recountApprovalShare } from '../core/publishing.js?v=mtmjsdom';
-import { MOCK_MODES } from '../core/connectors.js?v=mtmjsdom';
-import { teamCoverage, wizardTemplate } from '../core/project-factory.js?v=mtmjsdom';
-import { recordSeoAudit, saveSeoProfile, ctaFromProfile } from '../core/seo.js?v=mtmjsdom';
-import { llmReady } from './llm.js?v=mtmjsdom';
-import { draftWithModel } from './writer.js?v=mtmjsdom';
+import { advanceTask, createTask, planTask, unblockTask, ROUTES, KIND_LABELS } from '../core/workflow.js?v=mtmlkoru';
+import { approveArtifact, declineArtifact, deferArtifactDecision, editArtifact, rejectArtifact, rescheduleArtifact } from '../core/approval.js?v=mtmlkoru';
+import { campaignSummary, createCampaign } from '../core/campaigns.js?v=mtmlkoru';
+import { createPublishJob, retryPublish, runJob, recountApprovalShare } from '../core/publishing.js?v=mtmlkoru';
+import { MOCK_MODES } from '../core/connectors.js?v=mtmlkoru';
+import { teamCoverage, wizardTemplate } from '../core/project-factory.js?v=mtmlkoru';
+import { recordSeoAudit, saveSeoProfile, ctaFromProfile } from '../core/seo.js?v=mtmlkoru';
+import { llmReady } from './llm.js?v=mtmlkoru';
+import { draftWithModel } from './writer.js?v=mtmlkoru';
 
                                                                      
                                                             

@@ -7,16 +7,16 @@ import { dirname, join, resolve } from '../_shim/node.js';
                                                                                                                                         
                                                                
                     
-import { DomainError, ROLE_ORDER } from './types.js?v=mtmjsdom';
+import { DomainError, ROLE_ORDER } from './types.js?v=mtmlkoru';
                                       
-import { systemClock } from './ids.js?v=mtmjsdom';
-import { createConnectors } from './connectors.js?v=mtmjsdom';
-import { computeContentHash } from './hash.js?v=mtmjsdom';
-import { pushEvent } from './events.js?v=mtmjsdom';
-import { createTask } from './workflow.js?v=mtmjsdom';
+import { systemClock } from './ids.js?v=mtmlkoru';
+import { createConnectors } from './connectors.js?v=mtmlkoru';
+import { computeContentHash } from './hash.js?v=mtmlkoru';
+import { pushEvent } from './events.js?v=mtmlkoru';
+import { createTask } from './workflow.js?v=mtmlkoru';
                                              
-import { createProjectFiles, teamCoverage, validateProjectInput } from './project-factory.js?v=mtmjsdom';
-import { KIND_LABELS } from './workflow.js?v=mtmjsdom';
+import { createProjectFiles, teamCoverage, validateProjectInput } from './project-factory.js?v=mtmlkoru';
+import { KIND_LABELS } from './workflow.js?v=mtmlkoru';
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const TEAM_NAMES                         = { strategy: 'Strategy', content: 'Content', growth: 'Growth', control: 'Control', publishing: 'Publishing' };
@@ -43,12 +43,13 @@ export const ARCHIVE_TTL_DAYS = 30;
 
                                                                                                                                                                                                                                                        
 
-                                                                                                                               
+                                                                                                                                                   
 
 export class Store {
   root        ;
   runtimeDir        ;
   persist         ;
+  hideDemo         ;
   clock       ;
   catalog          = new Map();
   connectors                                         ;
@@ -58,6 +59,7 @@ export class Store {
     this.root = options.root ?? REPO_ROOT;
     this.runtimeDir = options.runtimeDir ?? join(this.root, 'runtime');
     this.persist = options.persist ?? true;
+    this.hideDemo = options.hideDemo ?? false;
     this.clock = options.clock ?? systemClock;
     this.connectors = createConnectors({ delayMs: options.connectorDelayMs });
     this.loadCatalog();
@@ -91,6 +93,9 @@ export class Store {
     const dir = join(this.root, 'projects');
     for (const id of readdirSync(dir).sort()) {
       if (id.startsWith('_')) continue; // шаблоны не загружаются как проекты
+      // Панель без демо (указание владельца 04.09): demo-* остаются в репозитории для
+      // тестов и публичной витрины, но в рабочую панель не загружаются.
+      if (this.hideDemo && id.startsWith('demo-')) continue;
       const file = join(dir, id, 'project.json');
       if (!existsSync(file)) continue;
       const runtimeFile = join(this.runtimeDir, id, 'state.json');

@@ -1,7 +1,7 @@
 // Календарная сетка: неделя / месяц, материалы и кампании, mock drag-and-drop с уважением согласования.
                                      
-import { api } from '../api.js?v=mtmjsdom';
-import { h, kindChip, dateKey, timeOf, fmtDay, addDays, todayKey, mondayOf, KIND_COLOR, ART_STATUS_SHORT } from '../ui.js?v=mtmjsdom';
+import { api } from '../api.js?v=mtmlkoru';
+import { h, kindChip, dateKey, timeOf, fmtDay, addDays, todayKey, mondayOf, KIND_COLOR, ART_STATUS_SHORT } from '../ui.js?v=mtmlkoru';
 
                                                                                                                      
 
