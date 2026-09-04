@@ -1,15 +1,15 @@
 // Маршруты, оркестрация и mock-провайдер. См. docs/WORKFLOW_CATALOG.md и docs/ARCHITECTURE.md §5.
              
-                                                                                                     
+                                                                                                                     
                                                
                     
-import { DomainError } from './types.js?v=mtlth9b9';
-import { computeContentHash, sha256 } from './hash.js?v=mtlth9b9';
-import { nextId, taskId as makeTaskId } from './ids.js?v=mtlth9b9';
-import { pushEvent } from './events.js?v=mtlth9b9';
-import { buildQualityReport } from './quality.js?v=mtlth9b9';
-import { getTask } from './approval.js?v=mtlth9b9';
-import { ctaFromProfile, seoProfileBrief } from './seo.js?v=mtlth9b9';
+import { DomainError } from './types.js?v=mtmjsdom';
+import { computeContentHash, sha256 } from './hash.js?v=mtmjsdom';
+import { nextId, taskId as makeTaskId } from './ids.js?v=mtmjsdom';
+import { pushEvent } from './events.js?v=mtmjsdom';
+import { buildQualityReport } from './quality.js?v=mtmjsdom';
+import { getTask } from './approval.js?v=mtmjsdom';
+import { ctaFromProfile, seoProfileBrief } from './seo.js?v=mtmjsdom';
 
 export const ROUTES                             = {
   post: ['market-researcher', 'chief-editor', 'creative-director', 'channel-editor', 'quality-controller'],
@@ -116,7 +116,7 @@ export function planTask(state              , now        , catalog         , tas
 
 // ---------- выполнение шага маршрута ----------
 
-export function advanceTask(state              , now        , catalog         , taskId        )                                        {
+export function advanceTask(state              , now        , catalog         , taskId        , opts                                 )                                        {
   const task = getTask(state, taskId);
   if (task.archived) throw new DomainError('ARCHIVED', 'Задача отклонена и архивирована');
   if (task.column === 'ideas') throw new DomainError('NOT_PLANNED', 'Задача ещё не запланирована директором');
@@ -140,8 +140,12 @@ export function advanceTask(state              , now        , catalog         , 
   if (task.column === 'planned') task.column = 'in_progress';
 
   const nextRole                            = task.stepIndex + 1 < task.route.length ? task.route[task.stepIndex + 1] : 'approval_queue';
-  const produced = produce(state, now, catalog, task, roleId, nextRole);
-  produced.handoff.costUsd = cost;
+  const produced = produce(state, now, catalog, task, roleId, nextRole, opts?.generated);
+  // Настоящая модель: честный расход вместо условного (правка бюджета на разницу).
+  if (opts?.generated && roleId === 'chief-editor') {
+    agent.budget.spentUsd = Math.round((agent.budget.spentUsd - cost + opts.generated.costUsd) * 100) / 100;
+    produced.handoff.costUsd = opts.generated.costUsd;
+  } else produced.handoff.costUsd = cost;
   produced.handoff.model = agent.model;
   task.handoffs.push(produced.handoff);
   task.stepIndex += 1;
@@ -252,7 +256,7 @@ function lastHandoffOf(task      , role        )                           {
   return [...task.handoffs].reverse().find((h) => h.from === role);
 }
 
-function produce(state              , now        , catalog         , task      , role        , to                           )                            {
+function produce(state              , now        , catalog         , task      , role        , to                           , generated                 )                            {
   const p = state.project;
   const def = catalog.get(role) ;
   const h = baseHandoff(state, task, role, to, def.output.artifactKind, now);
@@ -307,7 +311,7 @@ function produce(state              , now        , catalog         , task      ,
       const facts = research?.facts ?? [];
       const sources = research?.sources ?? [];
       const proof = p.brand.proofs[0] ?? '';
-      let body = t(state,
+      let body = generated?.body ?? t(state,
         `${topic}: разбираем без обещаний.\n\nЧто важно знать: ${facts[0]?.text ?? 'тема требует спокойного объяснения'}.\nКак мы работаем: объясняем процесс, показываем, что проверить самому.\nДоказательство: ${proof}.\n\nАльтернативный хук: «Ошибка, которую совершают до первой консультации».`,
         `${topic}: explained without promises.\n\nWhat matters: ${facts[0]?.text ?? 'the topic needs a calm explanation'}.\nHow we work: we explain the process and show what to check yourself.\nProof: ${proof}.\n\nAlternative hook: “The mistake people make before the first consultation.”`);
       if (task.demo?.promise) body += t(state, '\n\nГарантируем результат — 100% успех в каждом случае.', '\n\nWe guarantee results — 100% success in every case.');
@@ -315,16 +319,18 @@ function produce(state              , now        , catalog         , task      ,
       // CTA-блок из анкеты (решение владельца 03.09): для SEO-страниц — формула
       // «призыв → чем занимаемся → регион → контакты»; правится на согласовании как любой текст.
       const profileCta = task.kind === 'seo_page' ? ctaFromProfile(state) : null;
-      const cta = profileCta ?? t(state, 'Задайте вопрос — ответим спокойно и по делу.', 'Ask a question — we answer calmly and to the point.');
-      const hashtags = [`#${p.id.replace(/[^a-z0-9]/gi, '')}`, t(state, '#разбор', '#explained')];
+      const cta = profileCta ?? generated?.cta ?? t(state, 'Задайте вопрос — ответим спокойно и по делу.', 'Ask a question — we answer calmly and to the point.');
+      const hashtags = generated?.hashtags?.length ? generated.hashtags : [`#${p.id.replace(/[^a-z0-9]/gi, '')}`, t(state, '#разбор', '#explained')];
       if (primary && primary.kind === 'draft') {
         primary.versions.push({ version: primary.version, title: primary.title, body: primary.body, cta: primary.cta, hashtags: [...primary.hashtags], contentHash: primary.contentHash, savedAt: now, reason: 'доработка редактором' });
         primary.body = body; primary.cta = cta; primary.hashtags = hashtags; primary.version += 1; primary.sources = sources; primary.facts = facts;
+        primary.generatedBy = generated ? 'model' : 'mock';
         primary.status = 'DRAFT'; primary.contentHash = computeContentHash(primary); primary.updatedAt = now;
         h.deliverableId = primary.id;
         h.summary = t(state, `Черновик переработан (v${primary.version}) с учётом замечаний: ${task.returnNotes.at(-1) ?? ''}`, `Draft reworked (v${primary.version}) per notes: ${task.returnNotes.at(-1) ?? ''}`);
       } else {
         const a = newArtifact(state, now, task, 'draft', role, topic, body, { cta, hashtags, sources, facts });
+        a.generatedBy = generated ? 'model' : 'mock';
         task.primaryArtifactId = a.id;
         h.deliverableId = a.id;
         h.summary = t(state, 'Основной вариант + альтернативный хук; факты со ссылками; формулировки для проверки отмечены', 'Main version + alternative hook; facts with sources; phrases to verify marked');

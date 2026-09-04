@@ -1,16 +1,18 @@
 // Обработчики /api/*. Транспорт-независимы: получают метод, путь, тело; возвращают объект.
                                               
-import { ARCHIVE_TTL_DAYS, MODEL_LABELS } from '../core/store.js?v=mtlth9b9';
-import { analyzeSite } from './site-audit.js?v=mtlth9b9';
-import { DomainError } from '../core/types.js?v=mtlth9b9';
+import { ARCHIVE_TTL_DAYS, MODEL_LABELS } from '../core/store.js?v=mtmjsdom';
+import { analyzeSite } from './site-audit.js?v=mtmjsdom';
+import { DomainError } from '../core/types.js?v=mtmjsdom';
                                                                            
-import { advanceTask, createTask, planTask, unblockTask, ROUTES, KIND_LABELS } from '../core/workflow.js?v=mtlth9b9';
-import { approveArtifact, declineArtifact, deferArtifactDecision, editArtifact, rejectArtifact, rescheduleArtifact } from '../core/approval.js?v=mtlth9b9';
-import { campaignSummary, createCampaign } from '../core/campaigns.js?v=mtlth9b9';
-import { createPublishJob, retryPublish, runJob, recountApprovalShare } from '../core/publishing.js?v=mtlth9b9';
-import { MOCK_MODES } from '../core/connectors.js?v=mtlth9b9';
-import { teamCoverage, wizardTemplate } from '../core/project-factory.js?v=mtlth9b9';
-import { recordSeoAudit, saveSeoProfile, ctaFromProfile } from '../core/seo.js?v=mtlth9b9';
+import { advanceTask, createTask, planTask, unblockTask, ROUTES, KIND_LABELS } from '../core/workflow.js?v=mtmjsdom';
+import { approveArtifact, declineArtifact, deferArtifactDecision, editArtifact, rejectArtifact, rescheduleArtifact } from '../core/approval.js?v=mtmjsdom';
+import { campaignSummary, createCampaign } from '../core/campaigns.js?v=mtmjsdom';
+import { createPublishJob, retryPublish, runJob, recountApprovalShare } from '../core/publishing.js?v=mtmjsdom';
+import { MOCK_MODES } from '../core/connectors.js?v=mtmjsdom';
+import { teamCoverage, wizardTemplate } from '../core/project-factory.js?v=mtmjsdom';
+import { recordSeoAudit, saveSeoProfile, ctaFromProfile } from '../core/seo.js?v=mtmjsdom';
+import { llmReady } from './llm.js?v=mtmjsdom';
+import { draftWithModel } from './writer.js?v=mtmjsdom';
 
                                                                      
                                                             
@@ -113,7 +115,18 @@ export async function handleApi(store       , req            )                  
         return ok({ task, state: projectState(store, pid) });
       }
       if (rest[0] === 'tasks' && rest[2] === 'plan') { const task = store.mutate(pid, (s, now) => planTask(s, now, store.catalog, rest[1])); return ok({ task, state: projectState(store, pid) }); }
-      if (rest[0] === 'tasks' && rest[2] === 'advance') { const r = store.mutate(pid, (s, now) => advanceTask(s, now, store.catalog, rest[1])); return ok({ ...r, state: projectState(store, pid) }); }
+      if (rest[0] === 'tasks' && rest[2] === 'advance') {
+        // Настоящий писатель (решение владельца 04.09): если следующий шаг — главный
+        // редактор и ключ OfoxAI на месте, текст пишет модель; при сбое — честная заготовка.
+        let generated = null;
+        const t0 = store.get(pid).tasks.find((t) => t.id === rest[1]);
+        if (t0 && !t0.blockedReason && t0.route[t0.stepIndex] === 'chief-editor' && llmReady()) {
+          try { generated = await draftWithModel(store.get(pid), t0); }
+          catch (e) { generated = null; console.error('писатель недоступен:', e instanceof Error ? e.message : e); }
+        }
+        const r = store.mutate(pid, (s, now) => advanceTask(s, now, store.catalog, rest[1], generated ? { generated } : undefined));
+        return ok({ ...r, state: projectState(store, pid) });
+      }
       if (rest[0] === 'tasks' && rest[2] === 'unblock') { const task = store.mutate(pid, (s, now) => unblockTask(s, now, rest[1], human(b, fallbackApprover), b.note ?? '')); return ok({ task, state: projectState(store, pid) }); }
       if (rest[0] === 'artifacts' && rest[2] === 'edit') { const a = store.mutate(pid, (s, now) => editArtifact(s, now, rest[1], human(b, fallbackApprover), b.patch ?? {}, b.reason)); return ok({ artifact: a, state: projectState(store, pid) }); }
       if (rest[0] === 'artifacts' && rest[2] === 'approve') { const ap = store.mutate(pid, (s, now) => approveArtifact(s, now, rest[1], human(b, fallbackApprover), { channelId: b.channelId, scheduledAt: b.scheduledAt, timezone: b.timezone })); return ok({ approval: ap, state: projectState(store, pid) }); }

@@ -1,7 +1,7 @@
 // Крупная карточка материала: текст, медиа-заглушка, площадки, время, риски, комментарий контролёра, решения человека.
                                      
-import { api } from '../api.js?v=mtlth9b9';
-import { h, badge, statusBadge, kindChip, modal, fmtDate, short, todayKey, PLATFORM_LABEL, STATUS_LABEL, ART_KIND } from '../ui.js?v=mtlth9b9';
+import { api } from '../api.js?v=mtmjsdom';
+import { h, badge, statusBadge, kindChip, modal, fmtDate, short, todayKey, PLATFORM_LABEL, STATUS_LABEL, ART_KIND } from '../ui.js?v=mtmjsdom';
 
                                    
                     
@@ -82,7 +82,9 @@ export function materialCard(app     , a     , opts                      = {})  
   // Честная пометка (вопрос владельца 03.09 «что я здесь должен утвердить?»):
   // модель-писатель не подключена, тексты — заготовки для проверки маршрута и решений.
   const draftNote = a.kind === 'draft' || a.kind === 'channel_versions'
-    ? h('div', { class: 'callout', style: { marginBottom: '8px' } }, h('b', null, 'Это заготовка. '), 'Модель-писатель ещё не подключена: команда показывает, как пойдёт работа и что вы будете решать. Настоящие тексты появятся после подключения модели.')
+    ? (a.generatedBy === 'model'
+      ? h('div', { class: 'callout human', style: { marginBottom: '8px' } }, h('b', null, 'Написано моделью. '), 'Текст подготовила настоящая модель по брифу команды, проверен контролёром — решение за вами.')
+      : h('div', { class: 'callout', style: { marginBottom: '8px' } }, h('b', null, 'Это заготовка. '), 'Текст собран из шаблона (модель была недоступна) — команда показывает, как пойдёт работа. Правится как обычный материал.'))
     : null;
   const excerpt = h('div', { class: 'excerpt' }, a.body, a.cta ? `\n\n${a.cta}` : '', a.hashtags?.length ? `\n${a.hashtags.join(' ')}` : '');
   const media = h('div', { class: 'media-ph' }, a.media?.length ? `${a.media[0].kind}: ${a.media[0].description}` : 'медиа не задано');

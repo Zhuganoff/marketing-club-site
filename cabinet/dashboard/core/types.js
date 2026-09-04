@@ -10,7 +10,7 @@
 export const ROLE_ORDER           = ['marketing-director', 'brand-strategist', 'market-researcher', 'seo-strategist', 'chief-editor', 'creative-director', 'reels-producer', 'channel-editor', 'quality-controller', 'funnel-analyst', 'publisher-executor'];
 
                                                                                   
-                                                                                                        
+                                                                                                                                                                                                                   
                                                                        
                                                                                                                           
                                                                                                                       
@@ -162,6 +162,16 @@ export const ROLE_ORDER           = ['marketing-director', 'brand-strategist', '
                                                                    
   
 
+// Текст, написанный настоящей моделью (передаётся из api-слоя в produce; ядро без сети).
+                              
+               
+                 
+               
+                      
+                  
+                 
+  
+
                                
                   
                 
@@ -195,6 +205,7 @@ export const ROLE_ORDER           = ['marketing-director', 'brand-strategist', '
                        
                                       
                             
+                                 
                                                            
                               
                          

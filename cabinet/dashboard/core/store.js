@@ -7,21 +7,21 @@ import { dirname, join, resolve } from '../_shim/node.js';
                                                                                                                                         
                                                                
                     
-import { DomainError, ROLE_ORDER } from './types.js?v=mtlth9b9';
+import { DomainError, ROLE_ORDER } from './types.js?v=mtmjsdom';
                                       
-import { systemClock } from './ids.js?v=mtlth9b9';
-import { createConnectors } from './connectors.js?v=mtlth9b9';
-import { computeContentHash } from './hash.js?v=mtlth9b9';
-import { pushEvent } from './events.js?v=mtlth9b9';
-import { createTask } from './workflow.js?v=mtlth9b9';
+import { systemClock } from './ids.js?v=mtmjsdom';
+import { createConnectors } from './connectors.js?v=mtmjsdom';
+import { computeContentHash } from './hash.js?v=mtmjsdom';
+import { pushEvent } from './events.js?v=mtmjsdom';
+import { createTask } from './workflow.js?v=mtmjsdom';
                                              
-import { createProjectFiles, teamCoverage, validateProjectInput } from './project-factory.js?v=mtlth9b9';
-import { KIND_LABELS } from './workflow.js?v=mtlth9b9';
+import { createProjectFiles, teamCoverage, validateProjectInput } from './project-factory.js?v=mtmjsdom';
+import { KIND_LABELS } from './workflow.js?v=mtmjsdom';
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const TEAM_NAMES                         = { strategy: 'Strategy', content: 'Content', growth: 'Growth', control: 'Control', publishing: 'Publishing' };
 export { ROLE_ORDER };
-export const MODEL_LABELS                          = { 'gemini-3.7-flash': 'Gemini 3.7 Flash', 'kimi-k3': 'Kimi K3', 'claude-sonnet-4': 'Claude Sonnet 4', 'deepseek-v4-flash': 'DeepSeek V4 Flash', 'qwen': 'Qwen' };
+export const MODEL_LABELS                          = {"claude-fable-5.1": "Claude Fable 5.1", "claude-sonnet-5": "Claude Sonnet 5", "claude-haiku-4.5": "Claude Haiku 4.5", "gpt-5.6-sol": "GPT-5.6 Sol", "gpt-5.6-luna": "GPT-5.6 Luna", "gpt-5.6-terra": "GPT-5.6 Terra", "gpt-5.4-nano": "GPT-5.4 Nano", "gemini-3.7-flash": "Gemini 3.7 Flash", "deepseek-v4-flash": "DeepSeek V4 Flash", "glm-5.3-flash": "GLM-5.3 Flash"};
 // Контрольный потолок расходов проекта по умолчанию (условные $, не разрешение на реальные траты).
 export const DEFAULT_PROJECT_WEEKLY_LIMIT_USD = 60;
 // Архив удалённых проектов: projects/_archive/<id>-<метка>/ (папки с «_» панель не загружает); хранится 30 дней.
@@ -99,6 +99,15 @@ export class Store {
           const state = JSON.parse(readFileSync(runtimeFile, 'utf8'))                ;
           // Мягкая миграция runtime, созданного до появления личного порядка согласований.
           if (!Array.isArray(state.reviewDeferrals)) state.reviewDeferrals = [];
+          // Миграция моделей (аудит 2026-09-04): устаревшие id заменяются утверждёнными из каталога.
+          for (const agent of state.agents) {
+            if (agent.model && !(agent.model in MODEL_LABELS)) {
+              agent.model = this.catalog.get(agent.roleId)?.modelPolicy.primary ?? null;
+            }
+          }
+          for (const er of state.project.enabledRoles ?? []) {
+            if (er.model && !(er.model in MODEL_LABELS)) er.model = this.catalog.get(er.roleId)?.modelPolicy.primary ?? null;
+          }
           this.states.set(id, state);
           continue;
         } catch { /* повреждённое состояние — пересоздаём из сидов */ }

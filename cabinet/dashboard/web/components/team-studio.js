@@ -2,9 +2,9 @@
 // Движение здесь означает только локальный повтор сохранённых handoff-событий или
 // подтверждённое состояние working из проекции. Никаких запросов компонент не делает.
                                      
-import { buildTeamActivity } from '../agent-activity.js?v=mtlth9b9';
-import { reduceMotion } from '../motion.js?v=mtlth9b9';
-import { fmtDate, h } from '../ui.js?v=mtlth9b9';
+import { buildTeamActivity } from '../agent-activity.js?v=mtmjsdom';
+import { reduceMotion } from '../motion.js?v=mtmjsdom';
+import { fmtDate, h } from '../ui.js?v=mtmjsdom';
 
                                                                                      
 
