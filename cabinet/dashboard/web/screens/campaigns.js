@@ -1,7 +1,7 @@
 // Кампании: цель, период, каналы, UTM, связанные задачи, материалы, публикации и агрегированные показатели.
                                      
-import { api } from '../api.js?v=mtmlkoru';
-import { h, badge, statusBadge, kindChip, modal, fmtDate, todayKey, KIND_LABEL, ART_KIND, COLUMN_LABEL, PLATFORM_LABEL } from '../ui.js?v=mtmlkoru';
+import { api } from '../api.js?v=mtmlqkxg';
+import { h, badge, statusBadge, kindChip, modal, fmtDate, todayKey, KIND_LABEL, ART_KIND, COLUMN_LABEL, PLATFORM_LABEL } from '../ui.js?v=mtmlqkxg';
 
 const CAMPAIGN_STATUS                         = { planned: 'запланирована', active: 'идёт', finished: 'завершена' };
 

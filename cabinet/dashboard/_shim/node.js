@@ -1,7 +1,7 @@
 // Прослойка node-модулей для браузерной сборки кабинета (GitHub Pages).
 // Виртуальная файловая система: чтение из вшитого снимка (agents/, shared/, demo-проекты),
 // записи — в localStorage посетителя. Данные не покидают браузер.
-import SEED from './files.js?v=mtmlkoru';
+import SEED from './files.js?v=mtmlqkxg';
 
 const LS_KEY = 'mc.cabinet.fs.v1';
 const files = new Map(Object.entries(SEED));

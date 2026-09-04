@@ -2,7 +2,7 @@
 // моделью через OfoxAI. Промт собирается из профиля проекта, брифа исследователя и правил
 // честности; ядро получает готовый текст и остаётся без сети.
                                                                            
-import { generateText, parseModelJson } from './llm.js?v=mtmlkoru';
+import { generateText, parseModelJson } from './llm.js?v=mtmlqkxg';
 
 const MAX_RETURN_NOTE = 300;
 

@@ -1,6 +1,6 @@
                                      
-import { h, addDays, todayKey, mondayOf, kindChip, ART_STATUS_SHORT } from '../ui.js?v=mtmlkoru';
-import { calendarGrid } from '../components/calendar-grid.js?v=mtmlkoru';
+import { h, addDays, todayKey, mondayOf, kindChip, ART_STATUS_SHORT } from '../ui.js?v=mtmlqkxg';
+import { calendarGrid } from '../components/calendar-grid.js?v=mtmlqkxg';
 
 let lastError = '';
 

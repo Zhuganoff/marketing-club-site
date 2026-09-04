@@ -5,7 +5,7 @@ import { existsSync, readFileSync } from '../_shim/node.js';
 import { homedir } from '../_shim/node.js';
 import { join } from '../_shim/node.js';
                                                 
-import { DomainError } from '../core/types.js?v=mtmlkoru';
+import { DomainError } from '../core/types.js?v=mtmlqkxg';
 
 const KEY_PATH = join(homedir(), '.config/marketing-club/ofox.key');
 const BASE = 'https://api.ofox.ai/v1/chat/completions';
